@@ -11,11 +11,5 @@ namespace Script.Entity
 
         // 关联的GameObject
         public GameObject LinkGameObject { get; set; }
-    
-        // 关联的展示图片
-        public Sprite LinkSprite { get; set; }
-
-
-        // TODO: 实现捡东西
     }
 }

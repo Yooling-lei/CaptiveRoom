@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using IngameDebugConsole;
+using Script.Controller.Interactable;
 using Script.Entity;
 using Script.Enums;
+using Script.Tools;
 using UnityEngine;
 
 namespace Script.Manager
@@ -32,67 +34,73 @@ namespace Script.Manager
 
         // TODO: 拾取动画中不能打开背包
         private bool _couldOpenBag;
-        private bool _isShowBag;
-        private readonly List<ItemInPackage> _itemsInPackage = new();
 
-        public void AddItemToPackage(string itemName, GameObject itemObj)
+        // TODO: 控制展示背包UI
+        private bool _isShowBag;
+        public GameObject anchorPoint;
+        private readonly BagMatrix<ItemInPackage> _bagMatrix = new(4, 4);
+
+        public void AddItemToPackage(string itemName, PickupItemController itemController)
         {
-            var found = _itemsInPackage.FirstOrDefault(x => x.ItemName == itemName);
+            Debug.Log("Add Item To Package" + itemName);
+            Debug.Log("Add Item To Package" + itemController);
+
+            var found = _bagMatrix.FindElement(x => x!= null && x.ItemName == itemName);
             if (found != null)
             {
                 found.Count++;
+                // TODO: 更新角标UI
             }
             else
             {
-                var item = new ItemInPackage() { ItemName = itemName, Count = 1, LinkGameObject = itemObj };
-                _itemsInPackage.Add(item);
-            }
-
-            // LOG
-            Debug.Log("目前的背包物品有: ");
-            foreach (var item in _itemsInPackage)
-            {
-                Debug.Log(item.ItemName + " " + item.Count);
+                AddIntoBag(itemController, _bagMatrix);
             }
         }
 
+        private void AddIntoBag(string itemName, GameObject linkGameObject, BagMatrix<ItemInPackage> bagMatrix,
+            float scaleInBag = 1f)
+        {
+            var item = new ItemInPackage() { ItemName = itemName, Count = 1, LinkGameObject = linkGameObject };
+            var (row, col) = bagMatrix.PushElement(item);
 
-        // TODO: 添加到背包场景
-        // 添加时需要考虑背包的位置,行数排列等
-        // 应该通过存储的list动态算背包格子及排序
-        public GameObject testInBagItem;
+            // 计算物体位置
+            var itemPos = new Vector3(row * -2, 0, col * -2);
+            var instance = Instantiate(linkGameObject, anchorPoint.transform);
+            instance.transform.localPosition = itemPos;
+            instance.transform.localScale = new Vector3(scaleInBag, scaleInBag, scaleInBag);
+            // 挂载旋转脚本
+            instance.AddComponent<SelfRotation>();
+        }
 
-        public GameObject anchorPoint;
-        private BagMatrix _bagMatrix = new BagMatrix(4, 4);
+        private void AddIntoBag(PickupItemController itemController, BagMatrix<ItemInPackage> bagMatrix)
+        {
+            AddIntoBag(itemController.itemName, itemController.gameObject, bagMatrix, itemController.scaleInBag);
+        }
 
         private void Start()
         {
-            DebugLogConsole.AddCommand("testAdd", "testAdd", TestAddToBag);
+            DebugLogConsole.AddCommand("AddItem", "Add Item In To Bag", TestAddToBag);
         }
 
-        public void TestAddToBag()
+        public GameObject testInBagItem;
+
+        /// <summary>
+        /// Console 测试代码
+        /// </summary>
+        private void TestAddToBag()
         {
-            // TODO: 改成真实数据
-            var testObj = new CustomClass();
-            var (row, col) = _bagMatrix.PushElement(testObj);
-
-            // 根据矩阵坐标计算位置
-            // 向右 z轴-2 ,向下 x轴-2
-            var itemPos = new Vector3(row * -2, 0, col * -2);
-            var item = Instantiate(testInBagItem, anchorPoint.transform);
-            item.transform.localPosition = itemPos;
-
-            // TODO: 给物体挂载自旋转脚本
-            
-
-            Debug.Log("Row:" + row);
-            Debug.Log("Col:" + col);
+            // 随机生成一个string
+            var random = new System.Random();
+            var str = new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 5)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+            AddIntoBag(str, testInBagItem, _bagMatrix);
         }
 
 
         public void RemoveItemFromPackage(ItemInPackage item)
         {
-            _itemsInPackage.Remove(item);
+            // _itemsInPackage.Remove(item);
+            throw new NotImplementedException();
         }
 
         #endregion

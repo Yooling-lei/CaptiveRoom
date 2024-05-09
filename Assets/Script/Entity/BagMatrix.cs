@@ -1,15 +1,11 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Script.Entity
 {
-    public class CustomClass
+    public class BagMatrix<T>
     {
-        // 这里定义你自定义类的属性和方法
-    }
-
-    public class BagMatrix
-    {
-        private CustomClass[,] data;
+        private T[,] _data;
         private readonly int _rowCount;
         private readonly int _columnCount;
 
@@ -20,10 +16,10 @@ namespace Script.Entity
         {
             _rowCount = rows;
             _columnCount = columns;
-            data = new CustomClass[rows, columns];
+            _data = new T[rows, columns];
         }
 
-        public (int row, int col) PushElement(CustomClass value)
+        public (int row, int col) PushElement(T value)
         {
             while (true)
             {
@@ -34,10 +30,10 @@ namespace Script.Entity
                 }
 
                 // 遍历currentRow
-                for (var i = 0; i < _columnCount ; i++)
+                for (var i = 0; i < _columnCount; i++)
                 {
-                    if (data[CurrentRow, i] != null) continue;
-                    data[CurrentRow, i] = value;
+                    if (_data[CurrentRow, i] != null) continue;
+                    _data[CurrentRow, i] = value;
                     return (CurrentRow, i);
                 }
 
@@ -45,15 +41,34 @@ namespace Script.Entity
             }
         }
 
-        // 添加访问器、修改器和其他方法
-        public CustomClass GetElement(int row, int column)
+        // 一个遍历方法,接收一个回调函数,若回调函数返回true则返回该元素
+        // 这里可以后面优化为Map,再说
+        public T FindElement(Func<T, bool> predicate)
         {
-            return data[row, column];
+            for (var i = 0; i < _rowCount; i++)
+            {
+                for (var j = 0; j < _columnCount; j++)
+                {
+                    Debug.Log(_data[i, j]);
+                    if (predicate(_data[i, j]))
+                    {
+                        return _data[i, j];
+                    }
+                }
+            }
+
+            return default;
         }
 
-        public void SetElement(int row, int column, CustomClass value)
+        // 添加访问器、修改器和其他方法
+        public T GetElement(int row, int column)
         {
-            data[row, column] = value;
+            return _data[row, column];
+        }
+
+        public void SetElement(int row, int column, T value)
+        {
+            _data[row, column] = value;
         }
     }
 }

@@ -18,12 +18,10 @@ namespace Script.Controller.Interactable
     public class PickupItemController : BaseInteractableController
     {
         public string itemName;
+        public float scaleInBag = 1f;
+        public EItemStatus itemStatus = EItemStatus.Normal;
 
-        public EItemStatus itemStatus;
-
-        //碰撞体 
         private Collider _collider;
-
         protected override void Awake()
         {
             base.Awake();
@@ -66,7 +64,7 @@ namespace Script.Controller.Interactable
 
         private IEnumerator AddItemToPackage()
         {
-            GameManager.Instance.AddItemToPackage(itemName, gameObject);
+            GameManager.Instance.AddItemToPackage(itemName, this);
             Destroy(gameObject);
             yield return null;
         }
