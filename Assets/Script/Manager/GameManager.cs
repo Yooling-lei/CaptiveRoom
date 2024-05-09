@@ -38,14 +38,14 @@ namespace Script.Manager
         // TODO: 控制展示背包UI
         private bool _isShowBag;
         public GameObject anchorPoint;
-        private readonly BagMatrix<ItemInPackage> _bagMatrix = new(4, 4);
+        private readonly BagMatrix<ItemInPackage> _bagMatrix = new(4, 3);
 
         public void AddItemToPackage(string itemName, PickupItemController itemController)
         {
             Debug.Log("Add Item To Package" + itemName);
             Debug.Log("Add Item To Package" + itemController);
 
-            var found = _bagMatrix.FindElement(x => x!= null && x.ItemName == itemName);
+            var found = _bagMatrix.FindElement(x => x != null && x.ItemName == itemName);
             if (found != null)
             {
                 found.Count++;
@@ -63,11 +63,22 @@ namespace Script.Manager
             var item = new ItemInPackage() { ItemName = itemName, Count = 1, LinkGameObject = linkGameObject };
             var (row, col) = bagMatrix.PushElement(item);
 
+            // 创建空物体
+            var instance = new GameObject();
+            instance.transform.parent = anchorPoint.transform;
+
             // 计算物体位置
             var itemPos = new Vector3(row * -2, 0, col * -2);
-            var instance = Instantiate(linkGameObject, anchorPoint.transform);
             instance.transform.localPosition = itemPos;
             instance.transform.localScale = new Vector3(scaleInBag, scaleInBag, scaleInBag);
+            
+            // 通过捡拾的物体,赋值空物体的mesh和material
+            var meshFilter = instance.AddComponent<MeshFilter>();
+            meshFilter.mesh = linkGameObject.GetComponent<MeshFilter>().mesh;
+            
+            var meshRenderer = instance.AddComponent<MeshRenderer>();
+            meshRenderer.material = linkGameObject.GetComponent<MeshRenderer>().material;
+            
             // 挂载旋转脚本
             instance.AddComponent<SelfRotation>();
         }

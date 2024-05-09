@@ -20,7 +20,8 @@ namespace Script.Controller.Interactable
         public string itemName;
         public float scaleInBag = 1f;
         public EItemStatus itemStatus = EItemStatus.Normal;
-
+        
+        
         private Collider _collider;
         protected override void Awake()
         {
@@ -33,13 +34,15 @@ namespace Script.Controller.Interactable
         {
             if (itemStatus != EItemStatus.Normal) return;
 
-            // base.OnInteract();
-            Debug.Log("捡起一个物体");
             itemStatus = EItemStatus.PickedUp;
-
             // 让物体飞向玩家
             if (_collider is not null) _collider.enabled = false;
             StartCoroutine(PickUpItem());
+        }
+        
+        public void disableCollider()
+        {
+            if (_collider is not null) _collider.enabled = false;
         }
 
         private IEnumerator PickUpItem()
