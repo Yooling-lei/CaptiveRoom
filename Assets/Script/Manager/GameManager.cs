@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using IngameDebugConsole;
 using Script.Entity;
 using Script.Enums;
 using UnityEngine;
@@ -12,13 +14,8 @@ namespace Script.Manager
         // 不需要在编辑器初始化
         [HideInInspector] public GameObject player;
 
-
-        // 背包系统
-        // public List<>
-
         // 控制游戏运行状态, 
         public EGameStatus gameStatus;
-
 
         public void RegisterPlayer(GameObject obj)
         {
@@ -57,6 +54,39 @@ namespace Script.Manager
             {
                 Debug.Log(item.ItemName + " " + item.Count);
             }
+        }
+
+
+        // TODO: 添加到背包场景
+        // 添加时需要考虑背包的位置,行数排列等
+        // 应该通过存储的list动态算背包格子及排序
+        public GameObject testInBagItem;
+
+        public GameObject anchorPoint;
+        private BagMatrix _bagMatrix = new BagMatrix(4, 4);
+
+        private void Start()
+        {
+            DebugLogConsole.AddCommand("testAdd", "testAdd", TestAddToBag);
+        }
+
+        public void TestAddToBag()
+        {
+            // TODO: 改成真实数据
+            var testObj = new CustomClass();
+            var (row, col) = _bagMatrix.PushElement(testObj);
+
+            // 根据矩阵坐标计算位置
+            // 向右 z轴-2 ,向下 x轴-2
+            var itemPos = new Vector3(row * -2, 0, col * -2);
+            var item = Instantiate(testInBagItem, anchorPoint.transform);
+            item.transform.localPosition = itemPos;
+
+            // TODO: 给物体挂载自旋转脚本
+            
+
+            Debug.Log("Row:" + row);
+            Debug.Log("Col:" + col);
         }
 
 
