@@ -20,9 +20,10 @@ namespace Script.Controller.Interactable
         public string itemName;
         public float scaleInBag = 1f;
         public EItemStatus itemStatus = EItemStatus.Normal;
-        
-        
+
+
         private Collider _collider;
+
         protected override void Awake()
         {
             base.Awake();
@@ -38,11 +39,6 @@ namespace Script.Controller.Interactable
             // 让物体飞向玩家
             if (_collider is not null) _collider.enabled = false;
             StartCoroutine(PickUpItem());
-        }
-        
-        public void disableCollider()
-        {
-            if (_collider is not null) _collider.enabled = false;
         }
 
         private IEnumerator PickUpItem()
@@ -68,7 +64,8 @@ namespace Script.Controller.Interactable
         private IEnumerator AddItemToPackage()
         {
             GameManager.Instance.AddItemToPackage(itemName, this);
-            Destroy(gameObject);
+            yield return null;
+            gameObject.SetActive(false);
             yield return null;
         }
     }

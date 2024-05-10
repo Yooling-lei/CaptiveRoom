@@ -49,7 +49,6 @@ namespace Script.Entity
             {
                 for (var j = 0; j < _columnCount; j++)
                 {
-                    Debug.Log(_data[i, j]);
                     if (predicate(_data[i, j]))
                     {
                         return _data[i, j];

@@ -61,7 +61,6 @@ namespace Script.Controller.Common
 
         private void InvokeInteractTip()
         {
-            Debug.Log("展示交互TIP");
             if (hasHighlightEffect)
             {
                 highlightEffect.SetHighlighted(true);
@@ -70,7 +69,6 @@ namespace Script.Controller.Common
 
         private void CancelInteractTip()
         {
-            Debug.Log("取消交互TIP");
             if (hasHighlightEffect)
             {
                 highlightEffect.SetHighlighted(false);

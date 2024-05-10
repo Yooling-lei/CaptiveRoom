@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using IngameDebugConsole;
 using Script.Controller.Interactable;
@@ -7,6 +6,7 @@ using Script.Entity;
 using Script.Enums;
 using Script.Tools;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Script.Manager
 {
@@ -18,6 +18,8 @@ namespace Script.Manager
 
         // 控制游戏运行状态, 
         public EGameStatus gameStatus;
+
+        public GameObject WorldSpaceCanvas;
 
         public void RegisterPlayer(GameObject obj)
         {
@@ -38,7 +40,20 @@ namespace Script.Manager
         // TODO: 控制展示背包UI
         private bool _isShowBag;
         public GameObject anchorPoint;
+        public GameObject bagCanvas;
         private readonly BagMatrix<ItemInPackage> _bagMatrix = new(4, 3);
+        private bool _isShowBagPreFrame = false;
+
+        private void Update()
+        {
+            // FIXME: UI总体控制
+            var isPressed = Keyboard.current.tabKey.isPressed;
+            if (isPressed == _isShowBagPreFrame) return;
+            
+            bagCanvas.SetActive(isPressed);
+            _isShowBagPreFrame = isPressed;
+        }
+
 
         public void AddItemToPackage(string itemName, PickupItemController itemController)
         {
@@ -49,6 +64,9 @@ namespace Script.Manager
             if (found != null)
             {
                 found.Count++;
+                found.RefreshCountText();
+                // found.CountText
+
                 // TODO: 更新角标UI
             }
             else
@@ -71,16 +89,17 @@ namespace Script.Manager
             var itemPos = new Vector3(row * -2, 0, col * -2);
             instance.transform.localPosition = itemPos;
             instance.transform.localScale = new Vector3(scaleInBag, scaleInBag, scaleInBag);
-            
+
             // 通过捡拾的物体,赋值空物体的mesh和material
             var meshFilter = instance.AddComponent<MeshFilter>();
             meshFilter.mesh = linkGameObject.GetComponent<MeshFilter>().mesh;
-            
+
             var meshRenderer = instance.AddComponent<MeshRenderer>();
             meshRenderer.material = linkGameObject.GetComponent<MeshRenderer>().material;
-            
-            // 挂载旋转脚本
+
+            // 挂载旋转展示脚本
             instance.AddComponent<SelfRotation>();
+            item.ModelInBag = instance;
         }
 
         private void AddIntoBag(PickupItemController itemController, BagMatrix<ItemInPackage> bagMatrix)
@@ -90,6 +109,7 @@ namespace Script.Manager
 
         private void Start()
         {
+            WorldSpaceCanvas = GameObject.Find("WorldSpaceCanvas");
             DebugLogConsole.AddCommand("AddItem", "Add Item In To Bag", TestAddToBag);
         }
 
