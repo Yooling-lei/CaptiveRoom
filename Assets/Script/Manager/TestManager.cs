@@ -35,7 +35,7 @@ public class TestManager : Singleton<TestManager>
         var random = new System.Random();
         var str = new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 5)
             .Select(s => s[random.Next(s.Length)]).ToArray());
-        GameManager.Instance.AddIntoBag(str + testIndex, testInBagItem, _bagMatrix);
+        GameManager.Instance.AddIntoBagMatrix(str + testIndex, testInBagItem, _bagMatrix);
         testIndex++;
     }
 

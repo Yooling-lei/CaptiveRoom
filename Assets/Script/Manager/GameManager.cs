@@ -74,52 +74,22 @@ namespace Script.Manager
             }
             else
             {
-                AddIntoBag(itemController, _bagMatrix);
+                AddIntoBagMatrix(itemController, _bagMatrix);
             }
         }
 
-        public void AddIntoBag(string itemName, GameObject linkGameObject, BagMatrix<ItemInPackage> bagMatrix,
+        public void AddIntoBagMatrix(string itemName, GameObject linkGameObject, BagMatrix<ItemInPackage> bagMatrix,
             float scaleInBag = 1f)
         {
-            var item = new ItemInPackage() { ItemName = itemName, Count = 1, LinkGameObject = linkGameObject };
+            var item = new ItemInPackage()
+                { ItemName = itemName, Count = 1, LinkGameObject = linkGameObject, ScaleInBag = scaleInBag };
             var (row, col) = bagMatrix.PushElement(item);
-
-            // TODO: 物体的位置需要单独出来
-            // 创建空物体
-            var instance = new GameObject();
-            instance.transform.parent = anchorPoint.transform;
-
-            // 计算物体位置
-            var itemPos = CalculateItemInBagScenePosition(row, col);
-            instance.transform.localPosition = itemPos;
-            instance.transform.localScale = new Vector3(scaleInBag, scaleInBag, scaleInBag);
-
-            // 通过捡拾的物体,赋值空物体的mesh和material
-            var meshFilter = instance.AddComponent<MeshFilter>();
-            meshFilter.mesh = linkGameObject.GetComponent<MeshFilter>().mesh;
-
-            var meshRenderer = instance.AddComponent<MeshRenderer>();
-            meshRenderer.material = linkGameObject.GetComponent<MeshRenderer>().material;
-
-            // 挂载旋转展示脚本
-            instance.AddComponent<SelfRotation>();
-            item.ModelInBag = instance;
+            item.InitModelInBag(anchorPoint.transform, row, col);
         }
 
-        public void AddIntoBag(PickupItemController itemController, BagMatrix<ItemInPackage> bagMatrix)
+        public void AddIntoBagMatrix(PickupItemController itemController, BagMatrix<ItemInPackage> bagMatrix)
         {
-            AddIntoBag(itemController.itemName, itemController.gameObject, bagMatrix, itemController.scaleInBag);
-        }
-
-        /// <summary>
-        /// 计算在背包的物体的位置(localPosition)
-        /// </summary>
-        /// <param name="row">行数</param>
-        /// <param name="col">列数</param>
-        /// <returns></returns>
-        private static Vector3 CalculateItemInBagScenePosition(int row, int col)
-        {
-            return new Vector3(row * -2, 0, col * -2);
+            AddIntoBagMatrix(itemController.itemName, itemController.gameObject, bagMatrix, itemController.scaleInBag);
         }
 
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using Script.Manager;
+using Script.Tools;
 using TMPro;
 using UnityEngine;
 
@@ -11,16 +12,60 @@ namespace Script.Entity
 
         public int Count { get; set; }
 
+        public float ScaleInBag { get; set; } = 1;
+
+        public Vector2 BagIndex { get; set; }
+
         // 关联的GameObject
         public GameObject LinkGameObject { get; set; }
 
+        // 在背包场景的GameObject
         public GameObject ModelInBag { get; set; }
 
         private TextMeshProUGUI CountText { get; set; }
 
         private Vector3 Offset { get; set; } = new Vector3(-0.3f, 1, -0.3f);
 
+        private bool hasModelInBag = false;
 
+        #region 视图层更新
+
+        /// <summary>
+        /// 在背包场景生成旋转的物体模型 
+        /// </summary>
+        public void InitModelInBag(Transform anchor, int row, int col)
+        {
+            if (hasModelInBag) return;
+
+            Debug.Log("wtfffffffffffffffffff");
+            var instance = new GameObject()
+            {
+                transform = { parent = anchor }
+            };
+
+            // 计算物体位置
+            var itemPos = CalculateItemInBagScenePosition(row, col);
+            instance.transform.localPosition = itemPos;
+            instance.transform.localScale = new Vector3(ScaleInBag, ScaleInBag, ScaleInBag);
+
+            // 通过捡拾的物体,赋值空物体的mesh和material
+            var meshFilter = instance.AddComponent<MeshFilter>();
+            meshFilter.mesh = LinkGameObject.GetComponent<MeshFilter>().mesh;
+            var meshRenderer = instance.AddComponent<MeshRenderer>();
+            meshRenderer.material = LinkGameObject.GetComponent<MeshRenderer>().material;
+
+
+            // 挂载旋转展示脚本
+            instance.AddComponent<SelfRotation>();
+            BagIndex = new Vector2(row, col);
+            ModelInBag = instance;
+            hasModelInBag = true;
+        }
+
+
+        /// <summary>
+        /// 刷新CountText
+        /// </summary>
         public void RefreshCountText()
         {
             var linkTransform = ModelInBag.transform;
@@ -37,5 +82,15 @@ namespace Script.Entity
                 CountText.text = Count < 2 ? "" : Count.ToString();
             }
         }
+
+        /// <summary>
+        /// 计算在背包场景下物体的位置(localPosition)
+        /// </summary>
+        public static Vector3 CalculateItemInBagScenePosition(int row, int col)
+        {
+            return new Vector3(row * -2, 0, col * -2);
+        }
+
+        #endregion
     }
 }
