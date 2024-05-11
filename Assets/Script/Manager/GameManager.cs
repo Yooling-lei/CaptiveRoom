@@ -66,7 +66,8 @@ namespace Script.Manager
             Debug.Log("Add Item To Package" + itemName);
             Debug.Log("Add Item To Package" + itemController);
 
-            var (found, _, _) = _bagMatrix.FindElement(x => x != null && x.ItemName == itemName);
+
+            var (found, _, _) = _FindElement(itemName, _bagMatrix);
             if (found != null)
             {
                 found.Count++;
@@ -74,10 +75,16 @@ namespace Script.Manager
             }
             else
             {
-                AddIntoBagMatrix(itemController, _bagMatrix);
+                AddIntoBagMatrix(itemController);
             }
         }
 
+        public void AddIntoBagMatrix(PickupItemController itemController) =>
+            AddIntoBagMatrix(itemController, _bagMatrix);
+
+        public void AddIntoBagMatrix(PickupItemController itemController, BagMatrix<ItemInPackage> bagMatrix) =>
+            AddIntoBagMatrix(itemController.itemName, itemController.gameObject, bagMatrix, itemController.scaleInBag);
+        
         public void AddIntoBagMatrix(string itemName, GameObject linkGameObject, BagMatrix<ItemInPackage> bagMatrix,
             float scaleInBag = 1f)
         {
@@ -86,18 +93,40 @@ namespace Script.Manager
             var (row, col) = bagMatrix.PushElement(item);
             item.InitModelInBag(anchorPoint.transform, row, col);
         }
+        
+        /// <summary>
+        /// 从背包中移除一个物体
+        /// </summary>
+        /// <param name="itemName"></param>
+        public void RemoveItemFromPackage(string itemName) => RemoveItemFromPackage(itemName, _bagMatrix);
 
-        public void AddIntoBagMatrix(PickupItemController itemController, BagMatrix<ItemInPackage> bagMatrix)
+        public void RemoveItemFromPackage(string itemName, BagMatrix<ItemInPackage> bagMatrix)
         {
-            AddIntoBagMatrix(itemController.itemName, itemController.gameObject, bagMatrix, itemController.scaleInBag);
+            var (found, row, col) = _FindElement(itemName, bagMatrix);
+            if (found == null) return;
+
+            // 数量 --
+            if (found.Count > 1)
+            {
+                found.Count--;
+                found.RefreshCountText();
+                return;
+            }
+
+            // 数量为1时,移除元素
+            bagMatrix.RemoveElement(row, col);
+            bagMatrix.TraverseElement((item, x, y) =>
+            {
+                // 更新视图层
+                if (item == null) return true;
+                item.UpdatePositionOfModelInBag(x, y);
+                return false;
+            });
         }
 
-
-        public void RemoveItemFromPackage(ItemInPackage item)
-        {
-            // _itemsInPackage.Remove(item);
-            throw new NotImplementedException();
-        }
+        private static (ItemInPackage data, int x, int y) _FindElement(string itemName,
+            BagMatrix<ItemInPackage> bagMatrix) =>
+            bagMatrix.FindElement(x => x != null && x.ItemName == itemName);
 
         #endregion
     }

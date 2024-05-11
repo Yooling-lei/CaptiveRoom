@@ -61,7 +61,6 @@ namespace Script.Entity
             }
         }
 
-        // TODO: 测试这个函数
         // 移除一个元素
         public void RemoveElement(int row, int column)
         {

@@ -29,24 +29,15 @@ public class TestManager : Singleton<TestManager>
         TestAddToBag2();
         TestAddToBag2();
     }
+
     private void TestAddToBag2()
     {
-        // 随机生成一个string
-        var random = new System.Random();
-        var str = new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 5)
-            .Select(s => s[random.Next(s.Length)]).ToArray());
-        GameManager.Instance.AddIntoBagMatrix(str + testIndex, testInBagItem, _bagMatrix);
+        GameManager.Instance.AddIntoBagMatrix("test" + testIndex, testInBagItem, _bagMatrix);
         testIndex++;
     }
 
     private void TestRemoveElement()
-    { 
-        _bagMatrix.RemoveElement(0, 1);
-        _bagMatrix.TraverseElement((x, row, col) =>
-        {
-            if (x == null) return true;
-            Debug.Log($" {x.ItemName} : ({row},{col})");
-            return false;
-        });
+    {
+        GameManager.Instance.RemoveItemFromPackage("test1", _bagMatrix);
     }
 }

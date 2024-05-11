@@ -14,7 +14,11 @@ namespace Script.Entity
 
         public float ScaleInBag { get; set; } = 1;
 
-        public Vector2 BagIndex { get; set; }
+        // public Vector2 BagIndex { get; set; }
+
+        public int BagRow { get; set; }
+
+        public int BagCol { get; set; }
 
         // 关联的GameObject
         public GameObject LinkGameObject { get; set; }
@@ -37,7 +41,6 @@ namespace Script.Entity
         {
             if (hasModelInBag) return;
 
-            Debug.Log("wtfffffffffffffffffff");
             var instance = new GameObject()
             {
                 transform = { parent = anchor }
@@ -57,11 +60,29 @@ namespace Script.Entity
 
             // 挂载旋转展示脚本
             instance.AddComponent<SelfRotation>();
-            BagIndex = new Vector2(row, col);
+            SetBagRowAndCol(row, col);
             ModelInBag = instance;
             hasModelInBag = true;
         }
 
+        /// <summary>
+        /// 更新背包中物体的位置
+        /// </summary>
+        public void UpdatePositionOfModelInBag(int row, int col)
+        {
+            if (ModelInBag is null) return;
+            if (row == BagRow && col == BagCol) return;
+            
+            SetBagRowAndCol(row, col);
+            var itemPos = CalculateItemInBagScenePosition(row, col);
+            ModelInBag.transform.localPosition = itemPos;
+        }
+
+        private void SetBagRowAndCol(int row, int col)
+        {
+            BagRow = row;
+            BagCol = col;
+        }
 
         /// <summary>
         /// 刷新CountText
