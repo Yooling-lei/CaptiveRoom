@@ -21,6 +21,22 @@ namespace Script.Manager
 
         public GameObject WorldSpaceCanvas;
 
+        private void Start()
+        {
+            WorldSpaceCanvas = GameObject.Find("WorldSpaceCanvas");
+        }
+
+        private void Update()
+        {
+            // FIXME: UI总体控制
+            var isPressed = Keyboard.current.tabKey.isPressed;
+            if (isPressed == _isShowBagPreFrame) return;
+
+            bagCanvas.SetActive(isPressed);
+            _isShowBagPreFrame = isPressed;
+        }
+
+
         public void RegisterPlayer(GameObject obj)
         {
             player = obj;
@@ -44,30 +60,17 @@ namespace Script.Manager
         private readonly BagMatrix<ItemInPackage> _bagMatrix = new(4, 3);
         private bool _isShowBagPreFrame = false;
 
-        private void Update()
-        {
-            // FIXME: UI总体控制
-            var isPressed = Keyboard.current.tabKey.isPressed;
-            if (isPressed == _isShowBagPreFrame) return;
-            
-            bagCanvas.SetActive(isPressed);
-            _isShowBagPreFrame = isPressed;
-        }
-
 
         public void AddItemToPackage(string itemName, PickupItemController itemController)
         {
             Debug.Log("Add Item To Package" + itemName);
             Debug.Log("Add Item To Package" + itemController);
 
-            var found = _bagMatrix.FindElement(x => x != null && x.ItemName == itemName);
+            var (found, _, _) = _bagMatrix.FindElement(x => x != null && x.ItemName == itemName);
             if (found != null)
             {
                 found.Count++;
                 found.RefreshCountText();
-                // found.CountText
-
-                // TODO: 更新角标UI
             }
             else
             {
@@ -75,18 +78,19 @@ namespace Script.Manager
             }
         }
 
-        private void AddIntoBag(string itemName, GameObject linkGameObject, BagMatrix<ItemInPackage> bagMatrix,
+        public void AddIntoBag(string itemName, GameObject linkGameObject, BagMatrix<ItemInPackage> bagMatrix,
             float scaleInBag = 1f)
         {
             var item = new ItemInPackage() { ItemName = itemName, Count = 1, LinkGameObject = linkGameObject };
             var (row, col) = bagMatrix.PushElement(item);
 
+            // TODO: 物体的位置需要单独出来
             // 创建空物体
             var instance = new GameObject();
             instance.transform.parent = anchorPoint.transform;
 
             // 计算物体位置
-            var itemPos = new Vector3(row * -2, 0, col * -2);
+            var itemPos = CalculateItemInBagScenePosition(row, col);
             instance.transform.localPosition = itemPos;
             instance.transform.localScale = new Vector3(scaleInBag, scaleInBag, scaleInBag);
 
@@ -102,29 +106,20 @@ namespace Script.Manager
             item.ModelInBag = instance;
         }
 
-        private void AddIntoBag(PickupItemController itemController, BagMatrix<ItemInPackage> bagMatrix)
+        public void AddIntoBag(PickupItemController itemController, BagMatrix<ItemInPackage> bagMatrix)
         {
             AddIntoBag(itemController.itemName, itemController.gameObject, bagMatrix, itemController.scaleInBag);
         }
 
-        private void Start()
-        {
-            WorldSpaceCanvas = GameObject.Find("WorldSpaceCanvas");
-            DebugLogConsole.AddCommand("AddItem", "Add Item In To Bag", TestAddToBag);
-        }
-
-        public GameObject testInBagItem;
-
         /// <summary>
-        /// Console 测试代码
+        /// 计算在背包的物体的位置(localPosition)
         /// </summary>
-        private void TestAddToBag()
+        /// <param name="row">行数</param>
+        /// <param name="col">列数</param>
+        /// <returns></returns>
+        private static Vector3 CalculateItemInBagScenePosition(int row, int col)
         {
-            // 随机生成一个string
-            var random = new System.Random();
-            var str = new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 5)
-                .Select(s => s[random.Next(s.Length)]).ToArray());
-            AddIntoBag(str, testInBagItem, _bagMatrix);
+            return new Vector3(row * -2, 0, col * -2);
         }
 
 
