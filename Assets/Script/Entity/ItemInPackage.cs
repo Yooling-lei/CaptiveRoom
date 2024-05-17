@@ -20,6 +20,8 @@ namespace Script.Entity
 
         public int BagCol { get; set; }
 
+        public float ItemOffset { get; set; }
+
         // 关联的GameObject
         public GameObject LinkGameObject { get; set; }
 
@@ -37,7 +39,7 @@ namespace Script.Entity
         /// <summary>
         /// 在背包场景生成旋转的物体模型 
         /// </summary>
-        public void InitModelInBag(Transform anchor, int row, int col)
+        public void InitModelInBag(Transform anchor, int row, int col, float offset)
         {
             if (hasModelInBag) return;
 
@@ -47,7 +49,8 @@ namespace Script.Entity
             };
 
             // 计算物体位置
-            var itemPos = CalculateItemInBagScenePosition(row, col);
+            ItemOffset = offset;
+            var itemPos = CalculateItemInBagScenePosition(row, col, ItemOffset);
             instance.transform.localPosition = itemPos;
             instance.transform.localScale = new Vector3(ScaleInBag, ScaleInBag, ScaleInBag);
 
@@ -72,9 +75,9 @@ namespace Script.Entity
         {
             if (ModelInBag is null) return;
             if (row == BagRow && col == BagCol) return;
-            
+
             SetBagRowAndCol(row, col);
-            var itemPos = CalculateItemInBagScenePosition(row, col);
+            var itemPos = CalculateItemInBagScenePosition(row, col, ItemOffset);
             ModelInBag.transform.localPosition = itemPos;
         }
 
@@ -107,9 +110,9 @@ namespace Script.Entity
         /// <summary>
         /// 计算在背包场景下物体的位置(localPosition)
         /// </summary>
-        public static Vector3 CalculateItemInBagScenePosition(int row, int col)
+        private static Vector3 CalculateItemInBagScenePosition(int row, int col, float offset)
         {
-            return new Vector3(row * -2, 0, col * -2);
+            return new Vector3(row * -offset, 0, col * -offset);
         }
 
         #endregion
