@@ -5779,11 +5779,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: TestBagItem
       objectReference: {fileID: 0}
-    - target: {fileID: 2226864375531221827, guid: b5adbec41707e9c49afb428bf6d3510e,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2226864375531221831, guid: b5adbec41707e9c49afb428bf6d3510e,
         type: 3}
       propertyPath: m_RootOrder

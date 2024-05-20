@@ -78,7 +78,6 @@ namespace Script.Manager
             var col = index % matrixColumn;
             UnityAction clickAction = () => { OnSlotClick(index, row, col); };
             item.slotButton.onClick.AddListener(clickAction);
-
             slotButtons.Add(item);
         }
 
@@ -94,7 +93,7 @@ namespace Script.Manager
             AddItemToPackage(localName, controller);
 
         /// <summary>
-        /// 点击背包格子 
+        /// 点击背包格子  
         /// </summary>
         private void OnSlotClick(int index, int row, int col)
         {
@@ -114,6 +113,12 @@ namespace Script.Manager
 
             // 更新UI
             RefreshSlotColor();
+        }
+
+        public void OnItemUse(string itemName)
+        {
+            var (item, _, _) = _FindElement(itemName, GameBagMatrix);
+            item?.UseItem();
         }
 
         #endregion
@@ -179,8 +184,10 @@ namespace Script.Manager
         public void AddIntoBagMatrix(string itemName, GameObject linkGameObject, BagMatrix<ItemInPackage> bagMatrix,
             float scaleInBag = 1f)
         {
-            var item = new ItemInPackage()
-                { ItemName = itemName, Count = 1, LinkGameObject = linkGameObject, ScaleInBag = scaleInBag };
+            // TODO: linkGameObject 是否有使用委托? 添加到ItemInPackage中
+
+            var item = new ItemInPackage(itemName, 1, scaleInBag, linkGameObject);
+            // { ItemName = itemName, Count = 1, LinkGameObject = linkGameObject, ScaleInBag = scaleInBag };
             var (row, col) = bagMatrix.PushElement(item);
             item.InitModelInBag(bagRenderCameraController.anchorPoint.transform, row, col,
                 bagRenderCameraController.bagItemOffset);

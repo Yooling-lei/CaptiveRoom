@@ -12,11 +12,11 @@ public class AnimationPlayer : MonoBehaviour
     
     void Update()
     {
-        var keyboard = Keyboard.current;
-        if (keyboard.digit1Key.wasPressedThisFrame)
-        {
-            PlayCutScenesAnimation(1);
-        }
+        // var keyboard = Keyboard.current;
+        // if (keyboard.digit1Key.wasPressedThisFrame)
+        // {
+        //     PlayCutScenesAnimation(1);
+        // }
     }
 
 

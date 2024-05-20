@@ -1,4 +1,5 @@
 ﻿using System;
+using Script.Interface;
 using Script.Manager;
 using Script.Tools;
 using TMPro;
@@ -28,11 +29,25 @@ namespace Script.Entity
         // 在背包场景的GameObject
         public GameObject ModelInBag { get; set; }
 
+        private Action OnUse;
         private TextMeshProUGUI CountText { get; set; }
 
         private Vector3 Offset { get; set; } = new Vector3(-0.3f, 1, -0.3f);
 
         private bool hasModelInBag = false;
+
+        public ItemInPackage(string itemName, int count, float scaleInBag, GameObject linkGameObject)
+        {
+            ItemName = itemName;
+            Count = count;
+            LinkGameObject = linkGameObject;
+            ScaleInBag = scaleInBag;
+            var usable = linkGameObject.GetComponent<IUsableItem>();
+            if (usable != null)
+            {
+                OnUse += usable.OnItemUse;
+            }
+        }
 
         #region 视图层更新
 
@@ -116,5 +131,11 @@ namespace Script.Entity
         }
 
         #endregion
+
+        public void UseItem()
+        {
+            // TODO: 使用物品?
+            OnUse.Invoke();
+        }
     }
 }

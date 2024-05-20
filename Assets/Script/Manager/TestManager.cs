@@ -63,10 +63,10 @@ public class TestManager : Singleton<TestManager>
 
     void Start()
     {
-        DebugLogConsole.AddCommand("AddItem", "Add Item In To Bag", TestAddToBag);
-        DebugLogConsole.AddCommand<string>("RemoveItem", "Remove an item from the backpack.", TestRemoveElement);
-        DebugLogConsole.AddCommand("AddChange", "Add Item In To Bag", TestUpdateBagSelect);
+        // DebugLogConsole.AddCommand("AddItem", "Add Item In To Bag", TestAddToBag);
+        // DebugLogConsole.AddCommand<string>("RemoveItem", "Remove an item from the backpack.", TestRemoveElement);
         TestAddToBag();
+        DebugLogConsole.AddCommand<string>("UseItem", "Use an item from the backpack.", TestUseItem);
     }
 
     private int testIndex = 0;
@@ -83,6 +83,11 @@ public class TestManager : Singleton<TestManager>
         TestAddToBag2("test6");
         TestAddToBag2("test6");
         TestAddToBag2("test6");
+    }
+
+    private void TestUseItem(string testName)
+    {
+        BagManager.Instance.OnItemUse(testName);
     }
 
     private void TestAddToBag2(string testName)
@@ -105,22 +110,4 @@ public class TestManager : Singleton<TestManager>
         var matrix = BagManager.Instance.GameBagMatrix;
         BagManager.Instance.RemoveItemFromPackage(testName, matrix);
     }
-
-    private void TestUpdateBagSelect()
-    {
-        // TestAddToBag();
-        // StartCoroutine(TestCoroutine());
-    }
-
-    // IEnumerator TestCoroutine()
-    // {
-    //     // yield return new WaitForSeconds(2);
-    //     // GameManager.Instance.UpdateBagSelectSlotImage(0, 1);
-    //     // yield return new WaitForSeconds(2);
-    //     // GameManager.Instance.UpdateBagSelectSlotImage(0, 2);
-    //     // yield return new WaitForSeconds(2);
-    //     BagManager.Instance.UpdateBagSelectSlotImage(1, 0);
-    //     yield return new WaitForSeconds(2);
-    //     BagManager.Instance.UpdateBagSelectSlotImage(1, 1);
-    // }
 }
