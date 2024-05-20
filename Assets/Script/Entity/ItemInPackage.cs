@@ -96,7 +96,7 @@ namespace Script.Entity
             if (CountText is null)
             {
                 var prefab = PrefabManager.Instance.footNotePrefab;
-                var parent = GameManager.Instance.WorldSpaceCanvas.transform;
+                var parent = GameManager.Instance.worldSpaceCanvas.transform;
                 CountText = UnityEngine.Object.Instantiate(prefab, parent);
                 CountText.transform.position = linkTransform.position + Offset;
                 CountText.text = Count.ToString();

@@ -63,7 +63,7 @@ namespace Script.Controller.Interactable
 
         private IEnumerator AddItemToPackage()
         {
-            GameManager.Instance.AddItemToPackage(itemName, this);
+            BagManager.Instance.OnItemPickup(itemName, this);
             yield return null;
             gameObject.SetActive(false);
             yield return null;

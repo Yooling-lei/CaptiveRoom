@@ -2091,7 +2091,7 @@ namespace HighlightPlus
         void ComposeSmoothBlend(Visibility smoothGlowVisibility, Visibility smoothOutlineVisibility)
         {
             // Render mask on target surface
-            //if (Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.OSXPlayer || Application.platform == RuntimePlatform.IPhonePlayer) { // TODO: RML
+            //if (Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.OSXPlayer || Application.platform == RuntimePlatform.IPhonePlayer) { //
             cbHighlight.SetRenderTarget(colorAttachmentBuffer, depthAttachmentBuffer);
             //} else {
             //    cbHighlight.SetRenderTarget(colorAttachmentBuffer);

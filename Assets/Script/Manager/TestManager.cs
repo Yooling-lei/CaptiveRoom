@@ -17,7 +17,7 @@ public class TestManager : Singleton<TestManager>
     public GameObject testInBagItem;
     public GameObject testRawImage;
     public Camera testCamera;
-    
+
     public void testCalculate(Vector2 mousePoint)
     {
         // 获取 rawImage的宽高
@@ -30,7 +30,7 @@ public class TestManager : Singleton<TestManager>
         var xRange = new Vector2(pointPosition.x - width / 2, pointPosition.x + width / 2);
         var yRange = new Vector2(pointPosition.y - height / 2, pointPosition.y + height / 2);
         Debug.Log("Range:" + xRange + " " + yRange);
-        
+
         // 判断是否在范围内
         if (mousePoint.x > xRange.x && mousePoint.x < xRange.y && mousePoint.y > yRange.x && mousePoint.y < yRange.y)
         {
@@ -40,16 +40,13 @@ public class TestManager : Singleton<TestManager>
         {
             Debug.Log("Out Range");
         }
-        
+
         // 1.panel的中心点位
         // 2.panel中心点位 => 宽高 => 左上角点位
         // 3.根据左上角点位计算每个格子的位置
-        
+
         // slotImage: 250 * 250
         // 偏移量: 间距: 200 = 250%2 + 75(margin)
-        
-        
-        
     }
 
     private void Update()
@@ -59,9 +56,8 @@ public class TestManager : Singleton<TestManager>
             var mousePos = Mouse.current.position.ReadValue();
             // testCalculate(mousePos);
             Vector3 worldPos = testCamera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 10));
-            Debug.Log("worldPos: " + worldPos);
+            // Debug.Log("worldPos: " + worldPos);
         }
-        
     }
 
 
@@ -74,7 +70,6 @@ public class TestManager : Singleton<TestManager>
     }
 
     private int testIndex = 0;
-    private readonly BagMatrix<ItemInPackage> _bagMatrix = new(4, 3);
 
     private void TestAddToBag()
     {
@@ -92,7 +87,9 @@ public class TestManager : Singleton<TestManager>
 
     private void TestAddToBag2(string testName)
     {
-        var (found, _, _) = GameManager._FindElement(testName, _bagMatrix);
+        var matrix = BagManager.Instance.GameBagMatrix;
+        Debug.Log("aaaaa?????????" + matrix);
+        var (found, _, _) = BagManager._FindElement(testName, matrix);
         if (found != null)
         {
             found.Count++;
@@ -100,13 +97,14 @@ public class TestManager : Singleton<TestManager>
         }
         else
         {
-            GameManager.Instance.AddIntoBagMatrix(testName, testInBagItem, _bagMatrix);
+            BagManager.Instance.AddIntoBagMatrix(testName, testInBagItem, matrix);
         }
     }
 
     private void TestRemoveElement(string testName)
     {
-        GameManager.Instance.RemoveItemFromPackage(testName, _bagMatrix);
+        var matrix = BagManager.Instance.GameBagMatrix;
+        BagManager.Instance.RemoveItemFromPackage(testName, matrix);
     }
 
     private void TestUpdateBagSelect()
@@ -122,8 +120,8 @@ public class TestManager : Singleton<TestManager>
         // yield return new WaitForSeconds(2);
         // GameManager.Instance.UpdateBagSelectSlotImage(0, 2);
         // yield return new WaitForSeconds(2);
-        GameManager.Instance.UpdateBagSelectSlotImage(1, 0);
+        BagManager.Instance.UpdateBagSelectSlotImage(1, 0);
         yield return new WaitForSeconds(2);
-        GameManager.Instance.UpdateBagSelectSlotImage(1, 1);
+        BagManager.Instance.UpdateBagSelectSlotImage(1, 1);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Script.Manager;
+﻿using System;
+using Script.Manager;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ namespace Script.Controller.Common
     public class BagRenderCamera : MonoBehaviour
     {
         public Camera bagRenderCamera;
-   
+
 
         // 一个像素等于多少单位长度
         public float unitPrePixel;
@@ -17,21 +18,22 @@ namespace Script.Controller.Common
 
         // 正交size
         private float _bagCameraSize;
+
         // rawImage的宽高比
         private float _rawImageRatio;
-        
+
         // 需要初始化:
         // 背包 场景锚点
         public GameObject anchorPoint;
         public GameObject bagRawImage;
-        private void Start()
+
+        private void OnEnable()
         {
             InitBagSceneVariables();
-            GameManager.Instance.RegisterBagRenderCamera(this, bagRenderCamera);
+            BagManager.Instance.RegisterBagRenderCamera(this, bagRenderCamera);
         }
 
-
-        private void InitBagSceneVariables()
+        private void InitBagSceneVariables()  
         {
             bagRenderCamera = GetComponent<Camera>();
             // 用代码获取正交相机的size
