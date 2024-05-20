@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using Script.Controller.Common;
 using Script.Controller.Interactable;
+using Script.Controller.UI;
 using Script.Entity;
+using Script.Extension;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
@@ -10,17 +14,47 @@ namespace Script.Manager
 {
     public class BagManager : Singleton<BagManager>
     {
-        public Button firstButton;
+        // 背包UI Canvas
+        public GameObject bagCanvas;
+
+        // 背包UI 格子父物体
+        public GameObject bagSlotParent;
+
+        // 背包 格子预制件
+        public GameObject selectSlotImage;
+
+        // 背包的存储矩阵
+        public readonly BagMatrix<ItemInPackage> GameBagMatrix = new(4, 3);
+
+        // 背包场景摄像机控制器
+        [HideInInspector] public BagRenderCamera bagRenderCameraController;
+
+        // 背包 场景摄像机
+        [HideInInspector] public Camera bagRenderCamera;
+
+        // 背包格子按钮
+        [HideInInspector] public List<BagSlotController> slotButtons = new();
+
+        // 局部变量 上一帧是否显示背包
+        private bool _isPressTabPreFrame = false;
+
+        private bool _isShowingBag = false;
+
+        // 背包中选中的物体
+        private ItemInPackage _selectedItem;
+        private BagSlotController _selectedSlot;
+
+        // TODO: 拾取动画中不能打开背包
+        private bool _couldOpenBag;
+
+        // TODO: 控制展示背包UI
+        private bool _isShowBag;
+
+        #region 初始化
 
         private void Start()
         {
-            Debug.Log("注册了");
-            // firstButton.onClick.AddListener(() => { GameManager.Instance.OnItemClick(0, 0); });
-        }
-
-        public void ClickLog()
-        {
-            Debug.Log("aaaaaaaaaaaaaaaaaa");
+            RegisterSlotButtons();
         }
 
         public void RegisterBagRenderCamera(BagRenderCamera bagCameraController, Camera bagCamera)
@@ -29,56 +63,60 @@ namespace Script.Manager
             bagRenderCamera = bagCamera;
         }
 
-        #region 背包系统
 
-        // TODO: 拾取动画中不能打开背包
-        private bool _couldOpenBag;
-
-        // TODO: 控制展示背包UI
-        private bool _isShowBag;
-
-        // 背包UI Canvas
-        public GameObject bagCanvas;
-
-        // 背包 格子UI
-        public GameObject selectSlotImage;
-
-        // 背包中选中的物体
-        private ItemInPackage _selectedItem;
-
-        // 背包的存储矩阵
-        public readonly BagMatrix<ItemInPackage> GameBagMatrix = new(4, 3);
-
-        // 局部变量 上一帧是否显示背包
-        private bool _isPressTabPreFrame = false;
-        private bool _isShowingBag = false;
-
-
-        // TODO: 使用物品 => 格子物品count--
-
-        public void OnItemPickup(string localName, PickupItemController controller) =>
-            AddItemToPackage(localName, controller);
-
-        public void OnItemClick(int row, int col)
+        // 获取bagSlotParent下的所有Button, 并注册点击事件
+        private void RegisterSlotButtons()
         {
-            Debug.Log("点击了!!!");
-            var item = GameBagMatrix.GetElement(row, col);
-            if (item == null) return;
-            // _selectedItem = item;
-            // UpdateBagSelectSlotImage(item);
+            var buttons = bagSlotParent.GetComponentsInChildren<BagSlotController>();
+            buttons.Each((x, i) => { RegisterSlotButton(x, i, GameBagMatrix.ColumnCount); });
         }
 
 
-        private float _bagCameraSize,
-            _bagCameraHeight,
-            _bagCameraWidth;
+        private void RegisterSlotButton(BagSlotController item, int index, int matrixColumn)
+        {
+            var row = index / matrixColumn;
+            var col = index % matrixColumn;
+            UnityAction clickAction = () => { OnSlotClick(index, row, col); };
+            item.slotButton.onClick.AddListener(clickAction);
 
+            slotButtons.Add(item);
+        }
 
-        // 背包场景摄像机控制器
-        [HideInInspector] public BagRenderCamera bagRenderCameraController;
+        #endregion
 
-        // 背包 场景摄像机
-        [HideInInspector] public Camera bagRenderCamera;
+        #region 抛出方法
+
+        // TODO: 使用物品 => 格子物品count--
+        /// <summary>
+        /// 当可拾取物体触发拾取函数 
+        /// </summary>
+        public void OnItemPickup(string localName, PickupItemController controller) =>
+            AddItemToPackage(localName, controller);
+
+        /// <summary>
+        /// 点击背包格子 
+        /// </summary>
+        private void OnSlotClick(int index, int row, int col)
+        {
+            var item = GameBagMatrix.GetElement(row, col);
+            _selectedSlot = slotButtons[index];
+
+            if (item == null)
+            {
+                _selectedItem = null;
+            }
+            else
+            {
+                var controller = slotButtons[index];
+                controller.ChangeColor(true);
+                _selectedItem = item;
+            }
+
+            // 更新UI
+            RefreshSlotColor();
+        }
+
+        #endregion
 
 
         #region 2D UI
@@ -98,28 +136,12 @@ namespace Script.Manager
             _isPressTabPreFrame = isPressed;
         }
 
-        // FIXME: 改成切换选中UI
-        private void UpdateBagSelectSlotImage(ItemInPackage itemInPackage)
+        /// <summary>
+        /// 根据选中的格子,刷新格子颜色
+        /// </summary>
+        private void RefreshSlotColor()
         {
-            if (itemInPackage == null)
-            {
-                selectSlotImage.SetActive(false);
-                return;
-            }
-
-            if (itemInPackage == _selectedItem) return;
-            var row = itemInPackage.BagRow;
-            var col = itemInPackage.BagCol;
-            UpdateBagSelectSlotImage(row, col);
-        }
-
-        public void UpdateBagSelectSlotImage(int row, int col)
-        {
-            const int offset = 180;
-            const int initX = -350;
-            const int initY = 185;
-            selectSlotImage.SetActive(true);
-            selectSlotImage.transform.localPosition = new Vector3(initX + col * offset, initY - row * offset, 0);
+            slotButtons.Each((x, _) => x.ChangeColor(_selectedSlot != null && x == _selectedSlot));
         }
 
         #endregion
@@ -151,19 +173,19 @@ namespace Script.Manager
             AddIntoBagMatrix(itemController, GameBagMatrix);
 
         public void AddIntoBagMatrix(PickupItemController itemController, BagMatrix<ItemInPackage> bagMatrix) =>
-            AddIntoBagMatrix(itemController.itemName, itemController.gameObject, bagMatrix, itemController.scaleInBag);
+            AddIntoBagMatrix(itemController.itemName, itemController.gameObject, bagMatrix,
+                itemController.scaleInBag);
 
         public void AddIntoBagMatrix(string itemName, GameObject linkGameObject, BagMatrix<ItemInPackage> bagMatrix,
             float scaleInBag = 1f)
         {
             var item = new ItemInPackage()
                 { ItemName = itemName, Count = 1, LinkGameObject = linkGameObject, ScaleInBag = scaleInBag };
-            Debug.Log("??111============" + bagMatrix);
             var (row, col) = bagMatrix.PushElement(item);
-            Debug.Log("??2222===========" + item);
             item.InitModelInBag(bagRenderCameraController.anchorPoint.transform, row, col,
                 bagRenderCameraController.bagItemOffset);
         }
+
 
         /// <summary>
         /// 从背包中移除一个物体
@@ -198,8 +220,6 @@ namespace Script.Manager
         public static (ItemInPackage data, int x, int y) _FindElement(string itemName,
             BagMatrix<ItemInPackage> bagMatrix) =>
             bagMatrix.FindElement(x => x != null && x.ItemName == itemName);
-
-        #endregion
 
         #endregion
     }

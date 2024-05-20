@@ -12,9 +12,8 @@ namespace Script.Entity
         /// </summary>
         private T[,] _data;
 
-        private readonly int _rowCount;
-        private readonly int _columnCount;
-
+        public int RowCount { get; }
+        public int ColumnCount { get; }
         // 表示接下来设置的元素的行数(减少判断次数)
         public int CurrentRow { get; private set; } = 0;
         public (int x, int y) LastPosition { get; set; } = (0, 0);
@@ -31,8 +30,8 @@ namespace Script.Entity
 
         public BagMatrix(int rows, int columns)
         {
-            _rowCount = rows;
-            _columnCount = columns;
+            RowCount = rows;
+            ColumnCount = columns;
             _data = new T[rows, columns];
         }
 
@@ -42,14 +41,14 @@ namespace Script.Entity
         {
             while (true)
             {
-                if (CurrentRow >= _rowCount)
+                if (CurrentRow >= RowCount)
                 {
                     Debug.Log("背包已满");
                     return (-1, -1);
                 }
 
                 // 遍历currentRow
-                for (var i = 0; i < _columnCount; i++)
+                for (var i = 0; i < ColumnCount; i++)
                 {
                     if (_data[CurrentRow, i] != null) continue;
                     _data[CurrentRow, i] = value;
@@ -64,10 +63,10 @@ namespace Script.Entity
         // 移除一个元素
         public void RemoveElement(int row, int column)
         {
-            for (var i = 0; i < _rowCount; i++)
+            for (var i = 0; i < RowCount; i++)
             {
                 if (i < row) continue;
-                for (var j = 0; j < _columnCount; j++)
+                for (var j = 0; j < ColumnCount; j++)
                 {
                     if (i == row && j < column) continue;
                     var nextItem = NextItem(i, j);
@@ -81,12 +80,12 @@ namespace Script.Entity
 
         private T NextItem(int row, int column)
         {
-            if (column + 1 < _columnCount)
+            if (column + 1 < ColumnCount)
             {
                 return _data[row, column + 1];
             }
 
-            if (row + 1 < _rowCount)
+            if (row + 1 < RowCount)
             {
                 return _data[row + 1, 0];
             }
@@ -120,14 +119,14 @@ namespace Script.Entity
         // 遍历所有元素方法
         public void TraverseElement(Func<T, int, int, bool> method)
         {
-            for (var i = 0; i < _rowCount; i++)
+            for (var i = 0; i < RowCount; i++)
             {
-                for (var j = 0; j < _columnCount; j++)
+                for (var j = 0; j < ColumnCount; j++)
                 {
                     var shouldBreak = method(_data[i, j], i, j);
                     if (!shouldBreak) continue;
-                    i = _rowCount;
-                    j = _columnCount;
+                    i = RowCount;
+                    j = ColumnCount;
                 }
             }
         }

@@ -39,13 +39,16 @@ namespace Script.Controller.Player
             // 是否按下交互键
             if (_input.interact)
             {
-                Debug.Log("Debug2 交互键按下!!!");
+                // TODO: 判断是否调用 (如果在菜单页面或者暂停等,则不调用)
                 if (_hasInteractableObject) _interactableObject.OnInteract();
                 _input.interact = false;
             }
         }
 
 
+        /// <summary>
+        /// 判断朝向的物体是否可交互
+        /// </summary>
         private void InteractionEvaluation()
         {
             if (!Physics.Raycast(_mainCamera.transform.position, _mainCamera.transform.forward, out var hit,

@@ -43,6 +43,13 @@ namespace Script.Manager
             // TODO: 暂停时PlayerInput应该被禁用
         }
 
+        public void Test()
+        {
+            var showBag = false;
+            
+        }
+        
+
         private void Update()
         {
             // FIXME: UI总体控制

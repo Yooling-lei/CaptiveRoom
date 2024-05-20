@@ -88,7 +88,6 @@ public class TestManager : Singleton<TestManager>
     private void TestAddToBag2(string testName)
     {
         var matrix = BagManager.Instance.GameBagMatrix;
-        Debug.Log("aaaaa?????????" + matrix);
         var (found, _, _) = BagManager._FindElement(testName, matrix);
         if (found != null)
         {
@@ -109,19 +108,19 @@ public class TestManager : Singleton<TestManager>
 
     private void TestUpdateBagSelect()
     {
-        TestAddToBag();
-        StartCoroutine(TestCoroutine());
+        // TestAddToBag();
+        // StartCoroutine(TestCoroutine());
     }
 
-    IEnumerator TestCoroutine()
-    {
-        // yield return new WaitForSeconds(2);
-        // GameManager.Instance.UpdateBagSelectSlotImage(0, 1);
-        // yield return new WaitForSeconds(2);
-        // GameManager.Instance.UpdateBagSelectSlotImage(0, 2);
-        // yield return new WaitForSeconds(2);
-        BagManager.Instance.UpdateBagSelectSlotImage(1, 0);
-        yield return new WaitForSeconds(2);
-        BagManager.Instance.UpdateBagSelectSlotImage(1, 1);
-    }
+    // IEnumerator TestCoroutine()
+    // {
+    //     // yield return new WaitForSeconds(2);
+    //     // GameManager.Instance.UpdateBagSelectSlotImage(0, 1);
+    //     // yield return new WaitForSeconds(2);
+    //     // GameManager.Instance.UpdateBagSelectSlotImage(0, 2);
+    //     // yield return new WaitForSeconds(2);
+    //     BagManager.Instance.UpdateBagSelectSlotImage(1, 0);
+    //     yield return new WaitForSeconds(2);
+    //     BagManager.Instance.UpdateBagSelectSlotImage(1, 1);
+    // }
 }
