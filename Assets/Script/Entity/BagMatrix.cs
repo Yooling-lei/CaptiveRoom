@@ -13,7 +13,9 @@ namespace Script.Entity
         private T[,] _data;
 
         public int RowCount { get; }
+
         public int ColumnCount { get; }
+
         // 表示接下来设置的元素的行数(减少判断次数)
         public int CurrentRow { get; private set; } = 0;
         public (int x, int y) LastPosition { get; set; } = (0, 0);
@@ -63,12 +65,14 @@ namespace Script.Entity
         // 移除一个元素
         public void RemoveElement(int row, int column)
         {
+            Debug.Log("Remove Element" + row + column);
             for (var i = 0; i < RowCount; i++)
             {
                 if (i < row) continue;
                 for (var j = 0; j < ColumnCount; j++)
                 {
                     if (i == row && j < column) continue;
+                    Debug.Log("change" + i + j);
                     var nextItem = NextItem(i, j);
                     _data[i, j] = nextItem;
                     if (nextItem != null) continue;

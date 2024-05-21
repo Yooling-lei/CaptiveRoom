@@ -14,7 +14,6 @@ public class PlayerInputReceiver : MonoBehaviour
     public bool interact;
 
     [Header("Movement Settings")] public bool analogMovement;
-
     [Header("Mouse Cursor Settings")] public bool cursorLocked = true;
     public bool cursorInputForLook = true;
 
@@ -34,6 +33,7 @@ public class PlayerInputReceiver : MonoBehaviour
 
     public void OnJump(InputValue value)
     {
+        Debug.Log("on jump");
         JumpInput(value.isPressed);
     }
 

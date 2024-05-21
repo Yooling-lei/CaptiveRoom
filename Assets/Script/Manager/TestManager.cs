@@ -14,7 +14,7 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class TestManager : Singleton<TestManager>
 {
-    public GameObject testInBagItem;
+    public List<GameObject> testInBagItem;
     public GameObject testRawImage;
     public Camera testCamera;
 
@@ -40,13 +40,6 @@ public class TestManager : Singleton<TestManager>
         {
             Debug.Log("Out Range");
         }
-
-        // 1.panel的中心点位
-        // 2.panel中心点位 => 宽高 => 左上角点位
-        // 3.根据左上角点位计算每个格子的位置
-
-        // slotImage: 250 * 250
-        // 偏移量: 间距: 200 = 250%2 + 75(margin)
     }
 
     private void Update()
@@ -74,15 +67,14 @@ public class TestManager : Singleton<TestManager>
     private void TestAddToBag()
     {
         TestAddToBag2("test1");
+        TestAddToBag2("test1");
+        TestAddToBag2("test1");
         TestAddToBag2("test2");
+        TestAddToBag2("test3");
         TestAddToBag2("test3");
         TestAddToBag2("test4");
         TestAddToBag2("test5");
         TestAddToBag2("test5");
-        TestAddToBag2("test6");
-        TestAddToBag2("test6");
-        TestAddToBag2("test6");
-        TestAddToBag2("test6");
     }
 
     private void TestUseItem(string testName)
@@ -92,6 +84,11 @@ public class TestManager : Singleton<TestManager>
 
     private void TestAddToBag2(string testName)
     {
+        // testName最后一位转换为数字
+        var lastChar = testName.Last();
+        var lastNum = int.Parse(lastChar.ToString());
+        var item = testInBagItem[lastNum];
+        
         var matrix = BagManager.Instance.GameBagMatrix;
         var (found, _, _) = BagManager._FindElement(testName, matrix);
         if (found != null)
@@ -101,13 +98,7 @@ public class TestManager : Singleton<TestManager>
         }
         else
         {
-            BagManager.Instance.AddIntoBagMatrix(testName, testInBagItem, matrix);
+            BagManager.Instance.AddIntoBagMatrix(testName, item, matrix);
         }
-    }
-
-    private void TestRemoveElement(string testName)
-    {
-        var matrix = BagManager.Instance.GameBagMatrix;
-        BagManager.Instance.RemoveItemFromPackage(testName, matrix);
     }
 }

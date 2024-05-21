@@ -5,6 +5,7 @@ using Script.Controller.Interactable;
 using Script.Controller.UI;
 using Script.Entity;
 using Script.Extension;
+using Script.Tools;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -12,6 +13,12 @@ using UnityEngine.UI;
 
 namespace Script.Manager
 {
+    /**
+     * 设计逻辑:
+     * BagManager负责背包矩阵存储的管理 (以及格子UI)  ,抛出 "拾取物体"  "删除物体" 的接口
+     * 背包存储数据结构为BagMatrix, 用于在数据结构上管理
+     * BagMatrix内的实体为ItemInPackage, 管理它代表的物体的所有UI和使用逻辑
+     */
     public class BagManager : Singleton<BagManager>
     {
         // 背包UI Canvas
@@ -42,6 +49,8 @@ namespace Script.Manager
 
         // 背包中选中的物体
         private ItemInPackage _selectedItem;
+
+        // private ItemInPackage selectedItem { get; set; }
         private BagSlotController _selectedSlot;
 
         // TODO: 拾取动画中不能打开背包
@@ -50,12 +59,33 @@ namespace Script.Manager
         // TODO: 控制展示背包UI
         private bool _isShowBag;
 
-        #region 初始化
-
         private void Start()
         {
             RegisterSlotButtons();
+            var buttonEnumerator = KeyClickHelper.OnClick(Keyboard.current.qKey, () =>
+            {
+                if (_selectedItem == null) return;
+                var count = OnItemUse(_selectedItem);
+                if (count < 1)
+                {
+                    RemoveItemFromPackage(_selectedItem.ItemName);
+                    _selectedItem = null;
+                    _selectedSlot = null;
+                    RefreshSlotColor();
+                }
+            });
+            StartCoroutine(buttonEnumerator);
         }
+
+        private bool lastFramePressTab = false;
+
+
+        //FIXME: 改为inputSystem
+        private void Update()
+        {
+        }
+
+        #region 初始化
 
         public void RegisterBagRenderCamera(BagRenderCamera bagCameraController, Camera bagCamera)
         {
@@ -115,10 +145,20 @@ namespace Script.Manager
             RefreshSlotColor();
         }
 
-        public void OnItemUse(string itemName)
+        /// <summary>
+        /// 使用物品
+        /// </summary>
+        /// <returns></returns>
+        public int OnItemUse(string itemName)
         {
             var (item, _, _) = _FindElement(itemName, GameBagMatrix);
-            item?.UseItem();
+            return OnItemUse(item);
+        }
+
+        public int OnItemUse(ItemInPackage item)
+        {
+            var count = item?.UseItem() ?? 0;
+            return count;
         }
 
         #endregion
@@ -165,8 +205,7 @@ namespace Script.Manager
             var (found, _, _) = _FindElement(itemName, GameBagMatrix);
             if (found != null)
             {
-                found.Count++;
-                found.RefreshCountText();
+                found.CountPlus();
             }
             else
             {
@@ -185,10 +224,9 @@ namespace Script.Manager
             float scaleInBag = 1f)
         {
             // TODO: linkGameObject 是否有使用委托? 添加到ItemInPackage中
-
             var item = new ItemInPackage(itemName, 1, scaleInBag, linkGameObject);
-            // { ItemName = itemName, Count = 1, LinkGameObject = linkGameObject, ScaleInBag = scaleInBag };
             var (row, col) = bagMatrix.PushElement(item);
+            // TODO: 这个更新是否交给 new ItemInPackage() 处理?
             item.InitModelInBag(bagRenderCameraController.anchorPoint.transform, row, col,
                 bagRenderCameraController.bagItemOffset);
         }
@@ -205,21 +243,14 @@ namespace Script.Manager
             var (found, row, col) = _FindElement(itemName, bagMatrix);
             if (found == null) return;
 
-            // 数量 --
-            if (found.Count > 1)
-            {
-                found.Count--;
-                found.RefreshCountText();
-                return;
-            }
-
-            // 数量为1时,移除元素
+            found.DestroyModelInBag();
             bagMatrix.RemoveElement(row, col);
             bagMatrix.TraverseElement((item, x, y) =>
             {
                 // 更新视图层
                 if (item == null) return true;
-                item.UpdatePositionOfModelInBag(x, y);
+                Debug.Log("change后" + item.ItemName);
+                item.UpdatePosition(x, y);
                 return false;
             });
         }

@@ -29,7 +29,7 @@ namespace Script.Entity
         // 在背包场景的GameObject
         public GameObject ModelInBag { get; set; }
 
-        private Action OnUse;
+        private Action onUse;
         private TextMeshProUGUI CountText { get; set; }
 
         private Vector3 Offset { get; set; } = new Vector3(-0.3f, 1, -0.3f);
@@ -45,11 +45,11 @@ namespace Script.Entity
             var usable = linkGameObject.GetComponent<IUsableItem>();
             if (usable != null)
             {
-                OnUse += usable.OnItemUse;
+                onUse += usable.OnItemUse;
             }
         }
 
-        #region 视图层更新
+        #region 视图层更新 (场景 + 角标)
 
         /// <summary>
         /// 在背包场景生成旋转的物体模型 
@@ -83,10 +83,23 @@ namespace Script.Entity
             hasModelInBag = true;
         }
 
+        public void CountPlus()
+        {
+            Count++;
+            RefreshCountText();
+        }
+
+        public void CountMinus()
+        {
+            Count--;
+            RefreshCountText();
+        }
+
+
         /// <summary>
-        /// 更新背包中物体的位置
+        /// TODO:验证 更新背包中物体的位置
         /// </summary>
-        public void UpdatePositionOfModelInBag(int row, int col)
+        public void UpdatePosition(int row, int col)
         {
             if (ModelInBag is null) return;
             if (row == BagRow && col == BagCol) return;
@@ -94,6 +107,10 @@ namespace Script.Entity
             SetBagRowAndCol(row, col);
             var itemPos = CalculateItemInBagScenePosition(row, col, ItemOffset);
             ModelInBag.transform.localPosition = itemPos;
+            
+            // 更新角标位置
+            if (CountText is null) return;
+            CountText.transform.position = ModelInBag.transform.position + Offset;
         }
 
         private void SetBagRowAndCol(int row, int col)
@@ -114,7 +131,7 @@ namespace Script.Entity
                 var parent = GameManager.Instance.worldSpaceCanvas.transform;
                 CountText = UnityEngine.Object.Instantiate(prefab, parent);
                 CountText.transform.position = linkTransform.position + Offset;
-                CountText.text = Count.ToString();
+                CountText.text = Count < 2 ? "" : Count.ToString();
             }
             else
             {
@@ -132,10 +149,24 @@ namespace Script.Entity
 
         #endregion
 
-        public void UseItem()
+        #region 物品使用逻辑
+
+        public int UseItem()
         {
-            // TODO: 使用物品?
-            OnUse.Invoke();
+            // TODO: 是不是太简单了?
+            onUse.Invoke();
+            CountMinus();
+            return Count;
         }
+
+        public void DestroyModelInBag()
+        {
+            if (ModelInBag is null) return;
+            UnityEngine.Object.Destroy(ModelInBag);
+            ModelInBag = null;
+            hasModelInBag = false;
+        }
+
+        #endregion
     }
 }
