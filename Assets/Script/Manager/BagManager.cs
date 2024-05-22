@@ -53,31 +53,24 @@ namespace Script.Manager
         // private ItemInPackage selectedItem { get; set; }
         private BagSlotController _selectedSlot;
 
-        // TODO: 拾取动画中不能打开背包
+        // TODO: 拾取动画中不能打开背包 (不应该在这个类做这个事情,先记着)
         private bool _couldOpenBag;
-
-        // TODO: 控制展示背包UI
-        private bool _isShowBag;
 
         private void Start()
         {
             RegisterSlotButtons();
-            var buttonEnumerator = KeyClickHelper.OnClick(Keyboard.current.qKey, () =>
-            {
-                if (_selectedItem == null) return;
-                var count = OnItemUse(_selectedItem);
-                if (count < 1)
-                {
-                    RemoveItemFromPackage(_selectedItem.ItemName);
-                    _selectedItem = null;
-                    _selectedSlot = null;
-                    RefreshSlotColor();
-                }
-            });
-            StartCoroutine(buttonEnumerator);
         }
 
-        private bool lastFramePressTab = false;
+        public void OnInteractTrigger()
+        {
+            if (_selectedItem == null) return;
+            var count = OnItemUse(_selectedItem);
+            if (count >= 1) return;
+            RemoveItemFromPackage(_selectedItem.ItemName);
+            _selectedItem = null;
+            _selectedSlot = null;
+            RefreshSlotColor();
+        }
 
 
         //FIXME: 改为inputSystem
@@ -166,19 +159,13 @@ namespace Script.Manager
 
         #region 2D UI
 
-        private void UpdateBagVisible()
+        public bool IsShowingBag() => _isShowingBag;
+
+        public void ToggleBagVisible()
         {
-            var isPressed = Keyboard.current.tabKey.isPressed;
-            if (isPressed == _isPressTabPreFrame) return;
-
-            if (isPressed)
-            {
-                // 按下Tab键位
-                _isShowingBag = !_isShowingBag;
-                bagCanvas.SetActive(_isShowingBag);
-            }
-
-            _isPressTabPreFrame = isPressed;
+            _isShowingBag = !_isShowingBag;
+            bagCanvas.SetActive(_isShowingBag);
+            Time.timeScale = _isShowingBag ? 0.1f : 1f;
         }
 
         /// <summary>

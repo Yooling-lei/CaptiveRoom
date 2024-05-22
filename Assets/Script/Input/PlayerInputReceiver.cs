@@ -1,4 +1,4 @@
-using Script.Manager;
+using System;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -11,11 +11,28 @@ public class PlayerInputReceiver : MonoBehaviour
     public Vector2 look;
     public bool jump;
     public bool sprint;
-    public bool interact;
+    public Action ToggleBagAction;
+    public Action InteractAction;
 
     [Header("Movement Settings")] public bool analogMovement;
     [Header("Mouse Cursor Settings")] public bool cursorLocked = true;
     public bool cursorInputForLook = true;
+
+
+    public void unlockCursor()
+    {
+        cursorLocked = false;
+        SetCursorState(cursorLocked);
+        cursorInputForLook = false;
+    }
+
+    public void lockCursor()
+    {
+        cursorLocked = true;
+        SetCursorState(cursorLocked);
+        cursorInputForLook = true;
+    }
+
 
 #if ENABLE_INPUT_SYSTEM
     public void OnMove(InputValue value)
@@ -33,7 +50,6 @@ public class PlayerInputReceiver : MonoBehaviour
 
     public void OnJump(InputValue value)
     {
-        Debug.Log("on jump");
         JumpInput(value.isPressed);
     }
 
@@ -44,7 +60,13 @@ public class PlayerInputReceiver : MonoBehaviour
 
     public void OnInteract(InputValue value)
     {
-        InteractInput(value.isPressed);
+        Debug.Log("www 按下E");
+        InteractAction();
+    }
+
+    public void OnToggleBag(InputValue value)
+    {
+        ToggleBagAction();
     }
 
 #endif
@@ -68,11 +90,6 @@ public class PlayerInputReceiver : MonoBehaviour
     public void SprintInput(bool newSprintState)
     {
         sprint = newSprintState;
-    }
-
-    public void InteractInput(bool newInteractState)
-    {
-        interact = newInteractState;
     }
 
     private void OnApplicationFocus(bool hasFocus)

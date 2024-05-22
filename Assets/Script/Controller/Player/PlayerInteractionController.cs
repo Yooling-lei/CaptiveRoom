@@ -30,6 +30,8 @@ namespace Script.Controller.Player
         {
             _input = GetComponent<PlayerInputReceiver>();
             GameManager.Instance.RegisterPlayer(this.gameObject);
+            _input.ToggleBagAction += OnInputToggleBag;
+            _input.InteractAction += OnInputInteract;
         }
 
         private void Update()
@@ -37,12 +39,28 @@ namespace Script.Controller.Player
             // 玩家朝向且在范围内的可交互物体: 高亮、提示
             InteractionEvaluation();
             // 是否按下交互键
-            if (_input.interact)
+        }
+
+        private void OnInputInteract()
+        {
+            if (BagManager.Instance.IsShowingBag())
+            {
+                BagManager.Instance.OnInteractTrigger();
+            }
+            else
             {
                 // TODO: 判断是否调用 (如果在菜单页面或者暂停等,则不调用)
                 if (_hasInteractableObject) _interactableObject.OnInteract();
-                _input.interact = false;
             }
+        }
+
+        private void OnInputToggleBag()
+        {
+            Debug.Log("www 触发OnToggle");
+            if (BagManager.Instance.IsShowingBag()) _input.lockCursor();
+            else _input.unlockCursor();
+
+            BagManager.Instance.ToggleBagVisible();
         }
 
 

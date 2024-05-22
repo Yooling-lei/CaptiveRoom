@@ -531,6 +531,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 327aab1354784b3a9ccd4a97196ea58b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cursorLocked: 1
+  cursorInputForLook: 1
+  bagUIVisible: 0
   player: {fileID: 0}
   worldSpaceCanvas: {fileID: 0}
   gameStatus: 0
@@ -6247,7 +6250,7 @@ PrefabInstance:
     - target: {fileID: 1595183211290577812, guid: ef8906d07934b8b4292d1a51d336ff60,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2119200916003623214, guid: ef8906d07934b8b4292d1a51d336ff60,
         type: 3}
@@ -6303,6 +6306,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8997996947993115536, guid: ef8906d07934b8b4292d1a51d336ff60,
+        type: 3}
+      propertyPath: cursorLocked
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8997996947993115538, guid: ef8906d07934b8b4292d1a51d336ff60,
         type: 3}

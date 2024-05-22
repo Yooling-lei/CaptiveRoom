@@ -17,6 +17,20 @@ namespace Script.Manager
 {
     public class GameManager : Singleton<GameManager>
     {
+
+        public bool cursorLocked = true;
+        public bool cursorInputForLook = true;
+        public bool bagUIVisible = false;
+        
+        /**
+         * 对于目前构想的游戏系统,
+         * 除了正常游戏外,
+         * 应只有 物品栏状态,动画状态,对话菜单状态
+         * 
+         */
+        
+        
+        
         // 保存游戏实例:   Player, 
         // 不需要在编辑器初始化
         [HideInInspector] public GameObject player;
@@ -42,12 +56,7 @@ namespace Script.Manager
             gameStatus = status;
             // TODO: 暂停时PlayerInput应该被禁用
         }
-
-        public void Test()
-        {
-            var showBag = false;
-            
-        }
+        
         
 
         private void Update()

@@ -62,7 +62,6 @@ public class TestManager : Singleton<TestManager>
         DebugLogConsole.AddCommand<string>("UseItem", "Use an item from the backpack.", TestUseItem);
     }
 
-    private int testIndex = 0;
 
     private void TestAddToBag()
     {
@@ -88,7 +87,7 @@ public class TestManager : Singleton<TestManager>
         var lastChar = testName.Last();
         var lastNum = int.Parse(lastChar.ToString());
         var item = testInBagItem[lastNum];
-        
+
         var matrix = BagManager.Instance.GameBagMatrix;
         var (found, _, _) = BagManager._FindElement(testName, matrix);
         if (found != null)
