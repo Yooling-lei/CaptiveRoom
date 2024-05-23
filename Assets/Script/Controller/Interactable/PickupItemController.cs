@@ -1,8 +1,6 @@
 using System.Collections;
-using Script.Controller.Common;
 using Script.Manager;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Script.Controller.Interactable
 {

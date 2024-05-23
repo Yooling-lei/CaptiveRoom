@@ -18,9 +18,8 @@ namespace Script.Manager
     public class GameManager : Singleton<GameManager>
     {
 
-        public bool cursorLocked = true;
-        public bool cursorInputForLook = true;
-        public bool bagUIVisible = false;
+        // public bool cursorLocked = true;
+        // public bool cursorInputForLook = true;
         
         /**
          * 对于目前构想的游戏系统,
@@ -30,13 +29,17 @@ namespace Script.Manager
          */
         
         
-        
         // 保存游戏实例:   Player, 
         // 不需要在编辑器初始化
         [HideInInspector] public GameObject player;
+        [HideInInspector] public PlayerInputReceiver playerInputReceiver;
 
         // 世界空间UI
         [HideInInspector] public GameObject worldSpaceCanvas;
+        
+        // 默认是否锁定鼠标
+        [Header("鼠标设置")] public bool cursorLocked = true;
+
 
         // 控制游戏运行状态, 
         public EGameStatus gameStatus;
@@ -49,6 +52,31 @@ namespace Script.Manager
         public void RegisterPlayer(GameObject obj)
         {
             player = obj;
+            playerInputReceiver = player.GetComponent<PlayerInputReceiver>();
+        }
+        
+        public void LockCursor()
+        {
+            cursorLocked = true;
+            SetCursorState(cursorLocked);
+            if (playerInputReceiver != null) playerInputReceiver.cursorInputForLook = true;
+        }
+        
+        public void UnlockCursor()
+        {
+            cursorLocked = false;
+            SetCursorState(cursorLocked);
+            if (playerInputReceiver != null) playerInputReceiver.cursorInputForLook = false;
+        }
+        
+        private void OnApplicationFocus(bool hasFocus)
+        {
+            SetCursorState(cursorLocked);
+        }
+        
+        private static void SetCursorState(bool newState)
+        {
+            UnityEngine.Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
         }
 
         public void SwitchGameStatus(EGameStatus status)

@@ -19,19 +19,19 @@ public class PlayerInputReceiver : MonoBehaviour
     public bool cursorInputForLook = true;
 
 
-    public void unlockCursor()
-    {
-        cursorLocked = false;
-        SetCursorState(cursorLocked);
-        cursorInputForLook = false;
-    }
-
-    public void lockCursor()
-    {
-        cursorLocked = true;
-        SetCursorState(cursorLocked);
-        cursorInputForLook = true;
-    }
+    // public void UnlockCursor()
+    // {
+    //     cursorLocked = false;
+    //     SetCursorState(cursorLocked);
+    //     cursorInputForLook = false;
+    // }
+    //
+    // public void LockCursor()
+    // {
+    //     cursorLocked = true;
+    //     SetCursorState(cursorLocked);
+    //     cursorInputForLook = true;
+    // }
 
 
 #if ENABLE_INPUT_SYSTEM
@@ -92,13 +92,13 @@ public class PlayerInputReceiver : MonoBehaviour
         sprint = newSprintState;
     }
 
-    private void OnApplicationFocus(bool hasFocus)
-    {
-        SetCursorState(cursorLocked);
-    }
+    // private void OnApplicationFocus(bool hasFocus)
+    // {
+    //     SetCursorState(cursorLocked);
+    // }
 
-    private void SetCursorState(bool newState)
-    {
-        Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
-    }
+    // private void SetCursorState(bool newState)
+    // {
+    //     Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
+    // }
 }

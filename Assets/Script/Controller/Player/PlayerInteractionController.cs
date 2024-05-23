@@ -1,5 +1,6 @@
 ﻿using System;
 using Script.Controller.Common;
+using Script.Controller.Interactable;
 using Script.Manager;
 using UnityEngine;
 
@@ -54,11 +55,15 @@ namespace Script.Controller.Player
             }
         }
 
+        /// <summary>
+        /// 按下展示背包按键
+        /// </summary>
         private void OnInputToggleBag()
         {
+            // FIXME: unlock不应该在这里
             Debug.Log("www 触发OnToggle");
-            if (BagManager.Instance.IsShowingBag()) _input.lockCursor();
-            else _input.unlockCursor();
+            // if (BagManager.Instance.IsShowingBag()) _input.LockCursor();
+            // else _input.UnlockCursor();
 
             BagManager.Instance.ToggleBagVisible();
         }

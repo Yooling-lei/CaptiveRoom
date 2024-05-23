@@ -107,7 +107,7 @@ namespace Script.Entity
             SetBagRowAndCol(row, col);
             var itemPos = CalculateItemInBagScenePosition(row, col, ItemOffset);
             ModelInBag.transform.localPosition = itemPos;
-            
+
             // 更新角标位置
             if (CountText is null) return;
             CountText.transform.position = ModelInBag.transform.position + Offset;
@@ -125,6 +125,7 @@ namespace Script.Entity
         public void RefreshCountText()
         {
             var linkTransform = ModelInBag.transform;
+
             if (CountText is null)
             {
                 var prefab = PrefabManager.Instance.footNotePrefab;
@@ -165,6 +166,10 @@ namespace Script.Entity
             UnityEngine.Object.Destroy(ModelInBag);
             ModelInBag = null;
             hasModelInBag = false;
+            if (CountText != null)
+            {
+                UnityEngine.Object.Destroy(CountText);
+            }
         }
 
         #endregion

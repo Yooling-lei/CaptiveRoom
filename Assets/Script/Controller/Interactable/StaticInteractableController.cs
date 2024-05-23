@@ -1,5 +1,6 @@
 using System;
 using HighlightPlus;
+using Script.Controller.Interactable;
 using UnityEngine;
 
 namespace Script.Controller.Common

@@ -78,7 +78,7 @@ public class TestManager : Singleton<TestManager>
 
     private void TestUseItem(string testName)
     {
-        BagManager.Instance.OnItemUse(testName);
+        BagManager.Instance.UseItemInBag(testName);
     }
 
     private void TestAddToBag2(string testName)

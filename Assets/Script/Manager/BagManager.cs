@@ -13,6 +13,12 @@ using UnityEngine.UI;
 
 namespace Script.Manager
 {
+    public enum EBagBehavior
+    {
+        Normal,
+        Select
+    }
+
     /**
      * 设计逻辑:
      * BagManager负责背包矩阵存储的管理 (以及格子UI)  ,抛出 "拾取物体"  "删除物体" 的接口
@@ -56,27 +62,18 @@ namespace Script.Manager
         // TODO: 拾取动画中不能打开背包 (不应该在这个类做这个事情,先记着)
         private bool _couldOpenBag;
 
+        private EBagBehavior _bagBehavior = EBagBehavior.Normal;
+
+        private Action<ItemInPackage> _onSelectItem;
+        public void RegisterSelectItemAction(Action<ItemInPackage> onSelectItem) => _onSelectItem = onSelectItem;
+
+
         private void Start()
         {
             RegisterSlotButtons();
+            ToggleBagVisible(false);
         }
 
-        public void OnInteractTrigger()
-        {
-            if (_selectedItem == null) return;
-            var count = OnItemUse(_selectedItem);
-            if (count >= 1) return;
-            RemoveItemFromPackage(_selectedItem.ItemName);
-            _selectedItem = null;
-            _selectedSlot = null;
-            RefreshSlotColor();
-        }
-
-
-        //FIXME: 改为inputSystem
-        private void Update()
-        {
-        }
 
         #region 初始化
 
@@ -108,7 +105,6 @@ namespace Script.Manager
 
         #region 抛出方法
 
-        // TODO: 使用物品 => 格子物品count--
         /// <summary>
         /// 当可拾取物体触发拾取函数 
         /// </summary>
@@ -138,17 +134,48 @@ namespace Script.Manager
             RefreshSlotColor();
         }
 
+
+        /// <summary>
+        /// 背包内交互键触发
+        /// </summary>
+        public void OnInteractTrigger()
+        {
+            if (_selectedItem == null) return;
+
+            // 普通模式下,使用物品
+            if (_bagBehavior == EBagBehavior.Normal)
+            {
+                var count = UseItemInBag(_selectedItem);
+                if (count >= 1) return;
+                RemoveSelectedItem();
+            }
+            else if (_bagBehavior == EBagBehavior.Select)
+            {
+                _onSelectItem?.Invoke(_selectedItem);
+            }
+        }
+
+        public void RemoveSelectedItem()
+        {
+            if (_selectedItem == null) return;
+            RemoveItemFromPackage(_selectedItem.ItemName);
+            _selectedItem = null;
+            _selectedSlot = null;
+            RefreshSlotColor();
+        }
+
+
         /// <summary>
         /// 使用物品
         /// </summary>
         /// <returns></returns>
-        public int OnItemUse(string itemName)
+        public int UseItemInBag(string itemName)
         {
             var (item, _, _) = _FindElement(itemName, GameBagMatrix);
-            return OnItemUse(item);
+            return UseItemInBag(item);
         }
 
-        public int OnItemUse(ItemInPackage item)
+        private int UseItemInBag(ItemInPackage item)
         {
             var count = item?.UseItem() ?? 0;
             return count;
@@ -161,11 +188,31 @@ namespace Script.Manager
 
         public bool IsShowingBag() => _isShowingBag;
 
+        // 切换背包显示状态
         public void ToggleBagVisible()
         {
-            _isShowingBag = !_isShowingBag;
+            ToggleBagVisible(!_isShowingBag);
+        }
+
+        
+        // 打开背包,并设置选中物体行为
+        public void ToggleBagVisible(Action<ItemInPackage> onSelectItem)
+        {
+            RegisterSelectItemAction(onSelectItem);
+            ToggleBagVisible(true, EBagBehavior.Select);
+        }
+
+        // 设置背包显示状态
+        public void ToggleBagVisible(bool visible, EBagBehavior behavior = EBagBehavior.Normal)
+        {
+            _bagBehavior = behavior;
+            _isShowingBag = visible;
             bagCanvas.SetActive(_isShowingBag);
+            // 设置游戏流速
             Time.timeScale = _isShowingBag ? 0.1f : 1f;
+            // 设置鼠标锁定
+            if (_isShowingBag) GameManager.Instance.UnlockCursor();
+            else GameManager.Instance.LockCursor();
         }
 
         /// <summary>
@@ -236,7 +283,6 @@ namespace Script.Manager
             {
                 // 更新视图层
                 if (item == null) return true;
-                Debug.Log("change后" + item.ItemName);
                 item.UpdatePosition(x, y);
                 return false;
             });

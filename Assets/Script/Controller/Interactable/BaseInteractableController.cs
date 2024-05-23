@@ -2,7 +2,7 @@ using System;
 using HighlightPlus;
 using UnityEngine;
 
-namespace Script.Controller.Common
+namespace Script.Controller.Interactable
 {
     /// <summary>
     /// 可交互物体控制器
@@ -61,8 +61,10 @@ namespace Script.Controller.Common
 
         private void InvokeInteractTip()
         {
+            Debug.Log("invokeInteract tip");
             if (hasHighlightEffect)
             {
+                Debug.Log("hasHighlightEffect");
                 highlightEffect.SetHighlighted(true);
             }
         }
