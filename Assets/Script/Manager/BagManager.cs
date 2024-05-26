@@ -70,6 +70,7 @@ namespace Script.Manager
 
         private void Start()
         {
+            // Debug.Log("设置背包隐藏");
             RegisterSlotButtons();
             ToggleBagVisible(false);
         }
@@ -263,6 +264,7 @@ namespace Script.Manager
             // TODO: 这个更新是否交给 new ItemInPackage() 处理?
             item.InitModelInBag(bagRenderCameraController.anchorPoint.transform, row, col,
                 bagRenderCameraController.bagItemOffset);
+           
         }
 
 

@@ -58,7 +58,7 @@ public class TestManager : Singleton<TestManager>
     {
         // DebugLogConsole.AddCommand("AddItem", "Add Item In To Bag", TestAddToBag);
         // DebugLogConsole.AddCommand<string>("RemoveItem", "Remove an item from the backpack.", TestRemoveElement);
-        TestAddToBag();
+        // TestAddToBag();
         DebugLogConsole.AddCommand<string>("UseItem", "Use an item from the backpack.", TestUseItem);
     }
 

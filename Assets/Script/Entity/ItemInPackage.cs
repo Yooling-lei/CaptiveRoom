@@ -4,6 +4,7 @@ using Script.Manager;
 using Script.Tools;
 using TMPro;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Script.Entity
 {
@@ -58,10 +59,14 @@ namespace Script.Entity
         {
             if (hasModelInBag) return;
 
-            var instance = new GameObject()
-            {
-                transform = { parent = anchor }
-            };
+            // var instance = new GameObject()
+            // {
+            //     transform = { parent = anchor }
+            // };
+
+            var instance = Object.Instantiate(LinkGameObject, anchor, true);
+            // 复制LinkGameObject
+            
 
             // 计算物体位置
             ItemOffset = offset;
@@ -70,10 +75,10 @@ namespace Script.Entity
             instance.transform.localScale = new Vector3(ScaleInBag, ScaleInBag, ScaleInBag);
 
             // 通过捡拾的物体,赋值空物体的mesh和material
-            var meshFilter = instance.AddComponent<MeshFilter>();
-            meshFilter.mesh = LinkGameObject.GetComponent<MeshFilter>().mesh;
-            var meshRenderer = instance.AddComponent<MeshRenderer>();
-            meshRenderer.material = LinkGameObject.GetComponent<MeshRenderer>().material;
+            // var meshFilter = instance.AddComponent<MeshFilter>();
+            // meshFilter.mesh = LinkGameObject.GetComponent<MeshFilter>().mesh;
+            // var meshRenderer = instance.AddComponent<MeshRenderer>();
+            // meshRenderer.material = LinkGameObject.GetComponent<MeshRenderer>().material;
 
 
             // 挂载旋转展示脚本

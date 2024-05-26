@@ -11,7 +11,7 @@ namespace Script.Controller.UI
         [HideInInspector] public Button slotButton;
         [HideInInspector] private Image slotImage;
 
-        private void Start()
+        private void Awake()
         {
             slotButton = GetComponent<Button>();
             slotImage = GetComponent<Image>();

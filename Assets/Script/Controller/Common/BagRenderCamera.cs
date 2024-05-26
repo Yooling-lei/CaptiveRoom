@@ -27,9 +27,19 @@ namespace Script.Controller.Common
         public GameObject anchorPoint;
         public GameObject bagRawImage;
 
+        private void Awake()
+        {
+            Debug.Log("Camera Awake");
+        }
+
         private void OnEnable()
         {
+            Debug.Log("Camera Enable");
             InitBagSceneVariables();
+        }
+
+        private void Start()
+        {
             BagManager.Instance.RegisterBagRenderCamera(this, bagRenderCamera);
         }
 
