@@ -1,4 +1,5 @@
 ﻿using System;
+using Script.Controller.Interactable;
 using Script.Interface;
 using Script.Manager;
 using Script.Tools;
@@ -27,10 +28,13 @@ namespace Script.Entity
         // 关联的GameObject
         public GameObject LinkGameObject { get; set; }
 
+        public PickupItemController PickupItemController { get; set; }
+
         // 在背包场景的GameObject
         public GameObject ModelInBag { get; set; }
 
         private Action onUse;
+        private bool isUsable = false;
         private TextMeshProUGUI CountText { get; set; }
 
         private Vector3 Offset { get; set; } = new Vector3(-0.3f, 1, -0.3f);
@@ -43,7 +47,9 @@ namespace Script.Entity
             Count = count;
             LinkGameObject = linkGameObject;
             ScaleInBag = scaleInBag;
+            PickupItemController = linkGameObject.GetComponent<PickupItemController>();
             var usable = linkGameObject.GetComponent<IUsableItem>();
+            isUsable = usable != null;
             if (usable != null)
             {
                 onUse += usable.OnItemUse;
@@ -63,10 +69,10 @@ namespace Script.Entity
             // {
             //     transform = { parent = anchor }
             // };
-
-            var instance = Object.Instantiate(LinkGameObject, anchor, true);
+            var initTarget = PickupItemController?.itemModel ?? LinkGameObject;
+            var instance = Object.Instantiate(initTarget, anchor, true);
             // 复制LinkGameObject
-            
+
 
             // 计算物体位置
             ItemOffset = offset;
@@ -157,12 +163,19 @@ namespace Script.Entity
 
         #region 物品使用逻辑
 
-        public int UseItem()
+        // 物体是否可以直接使用
+        public bool IsUsable => isUsable;
+
+        // 使用物体
+        public bool UseItem(ref int count)
         {
+            if (!isUsable) return false;
+
             // TODO: 是不是太简单了?
             onUse.Invoke();
             CountMinus();
-            return Count;
+            count = Count;
+            return true;
         }
 
         public void DestroyModelInBag()

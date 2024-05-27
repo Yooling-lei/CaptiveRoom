@@ -146,6 +146,7 @@ namespace Script.Manager
             // 普通模式下,使用物品
             if (_bagBehavior == EBagBehavior.Normal)
             {
+                if (!_selectedItem.IsUsable) return;
                 var count = UseItemInBag(_selectedItem);
                 if (count >= 1) return;
                 RemoveSelectedItem();
@@ -178,7 +179,8 @@ namespace Script.Manager
 
         private int UseItemInBag(ItemInPackage item)
         {
-            var count = item?.UseItem() ?? 0;
+            var count = -1;
+            item?.UseItem(ref count);
             return count;
         }
 
@@ -195,7 +197,7 @@ namespace Script.Manager
             ToggleBagVisible(!_isShowingBag);
         }
 
-        
+
         // 打开背包,并设置选中物体行为
         public void ToggleBagVisible(Action<ItemInPackage> onSelectItem)
         {
@@ -265,7 +267,6 @@ namespace Script.Manager
             // TODO: 这个更新是否交给 new ItemInPackage() 处理?
             item.InitModelInBag(bagRenderCameraController.anchorPoint.transform, row, col,
                 bagRenderCameraController.bagItemOffset);
-           
         }
 
 

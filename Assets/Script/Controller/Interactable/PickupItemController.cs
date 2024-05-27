@@ -18,7 +18,7 @@ namespace Script.Controller.Interactable
         public string itemName;
         public float scaleInBag = 1f;
         public EItemStatus itemStatus = EItemStatus.Normal;
-
+        public GameObject itemModel;
 
         private Collider _collider;
 
