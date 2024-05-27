@@ -208,7 +208,8 @@ namespace Script.Manager
         {
             _bagBehavior = behavior;
             _isShowingBag = visible;
-            bagCanvas.SetActive(_isShowingBag);
+            // 设置bagCanvas的层级
+            bagCanvas.layer = _isShowingBag ? 5 : 15;
             // 设置游戏流速
             Time.timeScale = _isShowingBag ? 0.1f : 1f;
             // 设置鼠标锁定
