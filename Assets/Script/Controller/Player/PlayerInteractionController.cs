@@ -11,7 +11,7 @@ namespace Script.Controller.Player
     /// </summary>
     public class PlayerInteractionController : MonoBehaviour
     {
-        public float interactionRange = 1.5f;
+        public float interactionRange = 3f;
 
         private GameObject _mainCamera;
         private BaseInteractableController _interactableObject;
@@ -74,34 +74,34 @@ namespace Script.Controller.Player
         /// </summary>
         private void InteractionEvaluation()
         {
-            if (!Physics.Raycast(_mainCamera.transform.position, _mainCamera.transform.forward, out var hit,
-                    3f)) return;
-            if (hit.collider.CompareTag("Interactable"))
-            {
-                var interactableController = hit.collider.GetComponent<BaseInteractableController>();
-                if (interactableController is null)
-                {
-                    CancelCurrentInteract();
-                    return;
-                }
+            var raycast = Physics.Raycast(_mainCamera.transform.position, _mainCamera.transform.forward, out var hit,
+                interactionRange);
 
-                // 如果之前有交互物体
-                if (_hasInteractableObject)
-                {
-                    // 交互物体没变 不用处理
-                    if (interactableController.id == _interactableObject.id) return;
-                    // 交互物体变了 取消之前的高亮和提示
-                    CancelCurrentInteract();
-                }
-
-                _hasInteractableObject = true;
-                _interactableObject = interactableController;
-                interactableController.InvokeInteractable();
-            }
-            else
+            if (!raycast || !hit.collider.CompareTag("Interactable"))
             {
                 CancelCurrentInteract();
+                return;
             }
+
+            var interactableController = hit.collider.GetComponent<BaseInteractableController>();
+            if (interactableController is null)
+            {
+                CancelCurrentInteract();
+                return;
+            }
+
+            // 如果之前有交互物体
+            if (_hasInteractableObject)
+            {
+                // 交互物体没变 不用处理
+                if (interactableController.id == _interactableObject.id) return;
+                // 交互物体变了 取消之前的高亮和提示
+                CancelCurrentInteract();
+            }
+
+            _hasInteractableObject = true;
+            _interactableObject = interactableController;
+            interactableController.InvokeInteractable();
         }
 
         private void CancelCurrentInteract()
