@@ -3,6 +3,7 @@ using System.Linq;
 using IngameDebugConsole;
 using Script.Controller.Common;
 using Script.Controller.Interactable;
+using Script.Controller.UI;
 using Script.Entity;
 using Script.Enums;
 using Script.Tools;
@@ -17,26 +18,25 @@ namespace Script.Manager
 {
     public class GameManager : Singleton<GameManager>
     {
-
         // public bool cursorLocked = true;
         // public bool cursorInputForLook = true;
-        
+
         /**
          * 对于目前构想的游戏系统,
          * 除了正常游戏外,
          * 应只有 物品栏状态,动画状态,对话菜单状态
-         * 
+         *
          */
-        
-        
+
         // 保存游戏实例:   Player, 
         // 不需要在编辑器初始化
         [HideInInspector] public GameObject player;
+
         [HideInInspector] public PlayerInputReceiver playerInputReceiver;
 
         // 世界空间UI
         [HideInInspector] public GameObject worldSpaceCanvas;
-        
+
         // 默认是否锁定鼠标
         [Header("鼠标设置")] public bool cursorLocked = true;
 
@@ -54,26 +54,26 @@ namespace Script.Manager
             player = obj;
             playerInputReceiver = player.GetComponent<PlayerInputReceiver>();
         }
-        
+
         public void LockCursor()
         {
             cursorLocked = true;
             SetCursorState(cursorLocked);
             if (playerInputReceiver != null) playerInputReceiver.cursorInputForLook = true;
         }
-        
+
         public void UnlockCursor()
         {
             cursorLocked = false;
             SetCursorState(cursorLocked);
             if (playerInputReceiver != null) playerInputReceiver.cursorInputForLook = false;
         }
-        
+
         private void OnApplicationFocus(bool hasFocus)
         {
             SetCursorState(cursorLocked);
         }
-        
+
         private static void SetCursorState(bool newState)
         {
             UnityEngine.Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
@@ -84,8 +84,23 @@ namespace Script.Manager
             gameStatus = status;
             // TODO: 暂停时PlayerInput应该被禁用
         }
+
+        #region 字幕控制
+
+        public SubtitleController subtitleController;
+
+        public void AddSubtitleToPlay(SubtitleEntity subtitle)
+        {
+            if (subtitleController == null)
+            {
+                Debug.LogError("SubtitleController is null");
+                return;
+            }
+
+            subtitleController.AddSubtitleInSequence(subtitle);
+        }
         
-        
+        #endregion
 
         private void Update()
         {

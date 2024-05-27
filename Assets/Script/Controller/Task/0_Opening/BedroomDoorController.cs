@@ -11,6 +11,7 @@ namespace Script.Controller.Task.TaskTriggers
     public class BedroomDoorController : BaseInteractableController
     {
         private TaskEntity takePillTask;
+        private int _count = 0;
 
         private void Start()
         {
@@ -19,6 +20,7 @@ namespace Script.Controller.Task.TaskTriggers
 
         public override void OnInteract()
         {
+            _count++;
             if (takePillTask == null)
             {
                 takePillTask = TaskManager.Instance.GetTask("TakePill");
@@ -35,7 +37,26 @@ namespace Script.Controller.Task.TaskTriggers
             }
             else
             {
-                Debug.Log("还没有吃药");
+                if (_count == 1)
+                {
+                    var subtitle = new SubtitleEntity()
+                    {
+                        Key = "TakePillFirst",
+                        SubtitleText = "I need to take the pill first.",
+                        Duration = 3.0f
+                    };
+                    GameManager.Instance.AddSubtitleToPlay(subtitle);
+                }
+                else
+                {
+                    var subtitle = new SubtitleEntity()
+                    {
+                        Key = "TakePillFirst2",
+                        SubtitleText = "NO, I really need to take the pill first.",
+                        Duration = 3.0f
+                    };
+                    GameManager.Instance.AddSubtitleToPlay(subtitle);
+                }
             }
         }
     }
