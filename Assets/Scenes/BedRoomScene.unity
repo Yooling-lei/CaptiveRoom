@@ -846,6 +846,7 @@ GameObject:
   - component: {fileID: 554592801}
   - component: {fileID: 554592800}
   - component: {fileID: 554592799}
+  - component: {fileID: 554592802}
   m_Layer: 5
   m_Name: SubtitlePanel
   m_TagString: Untagged
@@ -886,7 +887,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d14021031834b1e900d683a68e679a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  subtitleText: {fileID: 1329176039}
 --- !u!114 &554592800
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -925,6 +925,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 554592797}
   m_CullTransparentMesh: 1
+--- !u!225 &554592802
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 554592797}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1001 &564243213
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1405,7 +1417,7 @@ Canvas:
   m_GameObject: {fileID: 683540238}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 60889539378096551}
   m_PlaneDistance: 0.3
   m_PixelPerfect: 0
