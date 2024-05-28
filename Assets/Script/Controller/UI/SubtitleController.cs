@@ -10,6 +10,8 @@ namespace Script.Controller.UI
 {
     public class SubtitleController : MonoBehaviour
     {
+        [Tooltip("字幕淡入淡出速度")] public float FadeSpeed = 1.0f;
+        
         // textMeshPro
         private List<SubtitleEntity> _playingSubtitles = new List<SubtitleEntity>();
         private TextMeshProUGUI _subtitleText;
@@ -17,7 +19,7 @@ namespace Script.Controller.UI
 
         private int _targetVisible = 0;
         private bool _isPlaying = false;
-
+        
         private bool IsPlaying
         {
             get => _isPlaying;
@@ -30,42 +32,51 @@ namespace Script.Controller.UI
             }
         }
 
-        private void Update()
-        {
-            if (_targetVisible < 0)
-            {
-                _subtitleCanvasGroup.alpha -= Time.deltaTime;
-                if (_subtitleCanvasGroup.alpha <= 0)
-                {
-                    _subtitleCanvasGroup.alpha = 0;
-                    _targetVisible = 0;
-                }
-            }
-            else if (_targetVisible > 0)
-            {
-                _subtitleCanvasGroup.alpha += Time.deltaTime;
-                if (_subtitleCanvasGroup.alpha >= 1)
-                {
-                    _subtitleCanvasGroup.alpha = 1;
-                    _targetVisible = 0;
-                }
-            }
-        }
-
         private void OnEnable()
         {
             _subtitleCanvasGroup = GetComponent<CanvasGroup>();
             _subtitleText = GetComponentInChildren<TextMeshProUGUI>();
         }
 
+        private void Update()
+        {
+            UpdateSubtitleAlpha(ref _targetVisible, _subtitleCanvasGroup);
+        }
+
+
         private void ChangeSubtitleVisible(bool visible)
         {
             _targetVisible = visible ? 1 : -1;
         }
 
+        /// <summary>
+        /// 根据目标展示隐藏来更新字幕的透明度
+        /// </summary>
+        private void UpdateSubtitleAlpha(ref int targetVisible, CanvasGroup canvasGroup)
+        {
+            if (targetVisible < 0)
+            {
+                canvasGroup.alpha -= Time.deltaTime * FadeSpeed;
+                if (canvasGroup.alpha <= 0)
+                {
+                    canvasGroup.alpha = 0;
+                    targetVisible = 0;
+                }
+            }
+            else if (targetVisible > 0)
+            {
+                canvasGroup.alpha += Time.deltaTime * FadeSpeed;
+                if (canvasGroup.alpha >= 1)
+                {
+                    canvasGroup.alpha = 1;
+                    targetVisible = 0;
+                }
+            }
+        }
 
-        // private int _currentSubtitleIndex = -1;
-        public bool UpdateSubtitleText(string text)
+        
+        // 更新显示的字幕文本
+        private bool UpdateSubtitleText(string text)
         {
             if (_subtitleText is null)
             {
@@ -77,6 +88,7 @@ namespace Script.Controller.UI
             return true;
         }
 
+        // 添加字幕到播放队列
         public void AddSubtitleInSequence(SubtitleEntity subtitle)
         {
             if (_playingSubtitles.Exists((x) => x.Key == subtitle.Key)) return;
@@ -85,7 +97,8 @@ namespace Script.Controller.UI
             if (!IsPlaying) StartPlaySubtitle();
         }
 
-        public void StartPlaySubtitle()
+        // 开始播放字幕
+        private void StartPlaySubtitle()
         {
             StartCoroutine(PlayCurrentSubtitle());
         }
@@ -111,7 +124,7 @@ namespace Script.Controller.UI
             }
             else
             {
-                UpdateSubtitleText("");
+                // UpdateSubtitleText("");
                 IsPlaying = false;
             }
         }
