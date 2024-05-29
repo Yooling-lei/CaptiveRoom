@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Script.Entity
 {
-    public class BagMatrix<T>
+    public class Matrix<T>
     {
         /// <summary>
         /// 目前背包定一个简单的功能:
@@ -30,7 +30,7 @@ namespace Script.Entity
          *
          */
 
-        public BagMatrix(int rows, int columns)
+        public Matrix(int rows, int columns)
         {
             RowCount = rows;
             ColumnCount = columns;

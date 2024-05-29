@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using Script.Entity;
 using Script.Enums;
 
@@ -8,22 +9,13 @@ namespace Script.Manager
     public class TaskManager : Singleton<TaskManager>
     {
         // public List<TaskEntity> taskEntities = new List<TaskEntity>();
-
         public Dictionary<string, TaskEntity> taskEntities = new Dictionary<string, TaskEntity>();
-
-        // 这个游戏的流程应该是比较简单的
-
+        
         private void OnEnable()
         {
-            //FIXME: FOR TEST  
-            // taskEntities.Add(new TaskEntity()
-            // {
-            //     Title = "TakePill",
-            //     Status = ETaskStatus.UnStart,
-            // });
         }
 
-        public void AddTask(string title, Action action)
+        public void AddTask(string title, Action action = null)
         {
             taskEntities.Add(title, new TaskEntity()
             {
@@ -39,11 +31,18 @@ namespace Script.Manager
             taskEntities[title].Status = ETaskStatus.Done;
             taskEntities[title].Action?.Invoke();
         }
-        
+
         public TaskEntity GetTask(string title)
         {
             if (!taskEntities.ContainsKey(title)) return null;
             return taskEntities[title];
         }
+        
+        
+        // 游戏进程:
+        // 1-1, 
+        // 读取存档,发现是1-1
+        
+        
     }
 }

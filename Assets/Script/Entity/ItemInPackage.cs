@@ -33,7 +33,7 @@ namespace Script.Entity
         // 在背包场景的GameObject
         public GameObject ModelInBag { get; set; }
 
-        private Action onUse;
+        // private Action onUse;
         private bool isUsable = false;
         private TextMeshProUGUI CountText { get; set; }
 
@@ -48,12 +48,6 @@ namespace Script.Entity
             LinkGameObject = linkGameObject;
             ScaleInBag = scaleInBag;
             PickupItemController = linkGameObject.GetComponent<PickupItemController>();
-            var usable = linkGameObject.GetComponent<IUsableItem>();
-            isUsable = usable != null;
-            if (usable != null)
-            {
-                onUse += usable.OnItemUse;
-            }
         }
 
         #region 视图层更新 (场景 + 角标)
@@ -64,28 +58,15 @@ namespace Script.Entity
         public void InitModelInBag(Transform anchor, int row, int col, float offset)
         {
             if (hasModelInBag) return;
-
-            // var instance = new GameObject()
-            // {
-            //     transform = { parent = anchor }
-            // };
+            
             var initTarget = PickupItemController?.itemModel ?? LinkGameObject;
             var instance = Object.Instantiate(initTarget, anchor, true);
-            // 复制LinkGameObject
-
 
             // 计算物体位置
             ItemOffset = offset;
             var itemPos = CalculateItemInBagScenePosition(row, col, ItemOffset);
             instance.transform.localPosition = itemPos;
             instance.transform.localScale = new Vector3(ScaleInBag, ScaleInBag, ScaleInBag);
-
-            // 通过捡拾的物体,赋值空物体的mesh和material
-            // var meshFilter = instance.AddComponent<MeshFilter>();
-            // meshFilter.mesh = LinkGameObject.GetComponent<MeshFilter>().mesh;
-            // var meshRenderer = instance.AddComponent<MeshRenderer>();
-            // meshRenderer.material = LinkGameObject.GetComponent<MeshRenderer>().material;
-
 
             // 挂载旋转展示脚本
             instance.AddComponent<SelfRotation>();
@@ -170,9 +151,10 @@ namespace Script.Entity
         public bool UseItem(ref int count)
         {
             if (!isUsable) return false;
-
-            // TODO: 是不是太简单了?
-            onUse.Invoke();
+            
+            // 若挂载的物体实现了IUsableItem接口,则调用OnItemUse方法
+            var usable = LinkGameObject.GetComponent<IUsableItem>();
+            usable?.OnItemUse();
             CountMinus();
             count = Count;
             return true;

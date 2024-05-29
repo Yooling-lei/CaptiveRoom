@@ -88,7 +88,7 @@ public class TestManager : Singleton<TestManager>
         var lastNum = int.Parse(lastChar.ToString());
         var item = testInBagItem[lastNum];
 
-        var matrix = BagManager.Instance.GameBagMatrix;
+        var matrix = BagManager.Instance.GameMatrix;
         var (found, _, _) = BagManager._FindElement(testName, matrix);
         if (found != null)
         {

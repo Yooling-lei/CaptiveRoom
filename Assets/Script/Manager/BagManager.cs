@@ -28,7 +28,9 @@ namespace Script.Manager
     public class BagManager : Singleton<BagManager>
     {
         // 背包UI Canvas
-        public GameObject bagCanvas;
+        // public GameObject bagCanvas;
+
+        public CanvasGroup bagCanvasGroup;
 
         // 背包UI 格子父物体
         public GameObject bagSlotParent;
@@ -37,7 +39,7 @@ namespace Script.Manager
         public GameObject selectSlotImage;
 
         // 背包的存储矩阵
-        public readonly BagMatrix<ItemInPackage> GameBagMatrix = new(4, 3);
+        public readonly Matrix<ItemInPackage> GameMatrix = new(4, 3);
 
         // 背包场景摄像机控制器
         [HideInInspector] public BagRenderCamera bagRenderCameraController;
@@ -48,15 +50,11 @@ namespace Script.Manager
         // 背包格子按钮
         [HideInInspector] public List<BagSlotController> slotButtons = new();
 
-        // 局部变量 上一帧是否显示背包
-        private bool _isPressTabPreFrame = false;
-
         private bool _isShowingBag = false;
 
         // 背包中选中的物体
         private ItemInPackage _selectedItem;
-
-        // private ItemInPackage selectedItem { get; set; }
+        
         private BagSlotController _selectedSlot;
 
         // TODO: 拾取动画中不能打开背包 (不应该在这个类做这个事情,先记着)
@@ -89,7 +87,7 @@ namespace Script.Manager
         private void RegisterSlotButtons()
         {
             var buttons = bagSlotParent.GetComponentsInChildren<BagSlotController>();
-            buttons.Each((x, i) => { RegisterSlotButton(x, i, GameBagMatrix.ColumnCount); });
+            buttons.Each((x, i) => { RegisterSlotButton(x, i, GameMatrix.ColumnCount); });
         }
 
 
@@ -117,7 +115,7 @@ namespace Script.Manager
         /// </summary>
         private void OnSlotClick(int index, int row, int col)
         {
-            var item = GameBagMatrix.GetElement(row, col);
+            var item = GameMatrix.GetElement(row, col);
             _selectedSlot = slotButtons[index];
 
             if (item == null)
@@ -173,7 +171,7 @@ namespace Script.Manager
         /// <returns></returns>
         public int UseItemInBag(string itemName)
         {
-            var (item, _, _) = _FindElement(itemName, GameBagMatrix);
+            var (item, _, _) = _FindElement(itemName, GameMatrix);
             return UseItemInBag(item);
         }
 
@@ -210,8 +208,9 @@ namespace Script.Manager
         {
             _bagBehavior = behavior;
             _isShowingBag = visible;
-            // 设置bagCanvas的层级
-            bagCanvas.layer = _isShowingBag ? 5 : 15;
+
+            // 设置bagCanvas的透明度
+            bagCanvasGroup.alpha = _isShowingBag ? 1 : 0;
             // 设置游戏流速
             Time.timeScale = _isShowingBag ? 0.1f : 1f;
             // 设置鼠标锁定
@@ -238,9 +237,8 @@ namespace Script.Manager
         {
             Debug.Log("Add Item To Package" + itemName);
             Debug.Log("Add Item To Package" + itemController);
-
-
-            var (found, _, _) = _FindElement(itemName, GameBagMatrix);
+            
+            var (found, _, _) = _FindElement(itemName, GameMatrix);
             if (found != null)
             {
                 found.CountPlus();
@@ -251,19 +249,21 @@ namespace Script.Manager
             }
         }
 
-        public void AddIntoBagMatrix(PickupItemController itemController) =>
-            AddIntoBagMatrix(itemController, GameBagMatrix);
+        private void AddIntoBagMatrix(PickupItemController itemController) =>
+            AddIntoBagMatrix(itemController, GameMatrix);
 
-        public void AddIntoBagMatrix(PickupItemController itemController, BagMatrix<ItemInPackage> bagMatrix) =>
-            AddIntoBagMatrix(itemController.itemName, itemController.gameObject, bagMatrix,
+        
+        private void AddIntoBagMatrix(PickupItemController itemController, Matrix<ItemInPackage> matrix) =>
+            AddIntoBagMatrix(itemController.itemName, itemController.gameObject, matrix,
                 itemController.scaleInBag);
 
-        public void AddIntoBagMatrix(string itemName, GameObject linkGameObject, BagMatrix<ItemInPackage> bagMatrix,
+        
+        public void AddIntoBagMatrix(string itemName, GameObject linkGameObject, Matrix<ItemInPackage> matrix,
             float scaleInBag = 1f)
         {
             // TODO: linkGameObject 是否有使用委托? 添加到ItemInPackage中
             var item = new ItemInPackage(itemName, 1, scaleInBag, linkGameObject);
-            var (row, col) = bagMatrix.PushElement(item);
+            var (row, col) = matrix.PushElement(item);
             // TODO: 这个更新是否交给 new ItemInPackage() 处理?
             item.InitModelInBag(bagRenderCameraController.anchorPoint.transform, row, col,
                 bagRenderCameraController.bagItemOffset);
@@ -274,16 +274,16 @@ namespace Script.Manager
         /// 从背包中移除一个物体
         /// </summary>
         /// <param name="itemName"></param>
-        public void RemoveItemFromPackage(string itemName) => RemoveItemFromPackage(itemName, GameBagMatrix);
+        public void RemoveItemFromPackage(string itemName) => RemoveItemFromPackage(itemName, GameMatrix);
 
-        public void RemoveItemFromPackage(string itemName, BagMatrix<ItemInPackage> bagMatrix)
+        public void RemoveItemFromPackage(string itemName, Matrix<ItemInPackage> matrix)
         {
-            var (found, row, col) = _FindElement(itemName, bagMatrix);
+            var (found, row, col) = _FindElement(itemName, matrix);
             if (found == null) return;
 
             found.DestroyModelInBag();
-            bagMatrix.RemoveElement(row, col);
-            bagMatrix.TraverseElement((item, x, y) =>
+            matrix.RemoveElement(row, col);
+            matrix.TraverseElement((item, x, y) =>
             {
                 // 更新视图层
                 if (item == null) return true;
@@ -293,8 +293,8 @@ namespace Script.Manager
         }
 
         public static (ItemInPackage data, int x, int y) _FindElement(string itemName,
-            BagMatrix<ItemInPackage> bagMatrix) =>
-            bagMatrix.FindElement(x => x != null && x.ItemName == itemName);
+            Matrix<ItemInPackage> matrix) =>
+            matrix.FindElement(x => x != null && x.ItemName == itemName);
 
         #endregion
     }

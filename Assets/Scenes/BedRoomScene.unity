@@ -206,12 +206,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 96892192}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.2344896, y: -2.1911612, z: 13.717513}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &109672223 stripped
 GameObject:
@@ -887,6 +887,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d14021031834b1e900d683a68e679a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  FadeSpeed: 1
 --- !u!114 &554592800
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1197,7 +1198,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4ad62c9cb1f4148b283dd7948ff9871, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bagCanvas: {fileID: 1072723579}
+  bagCanvasGroup: {fileID: 1072723584}
   bagSlotParent: {fileID: 1691918594}
   selectSlotImage: {fileID: 712366061220620584, guid: 1e6105d2d0cfd114fbd095bf597a124b,
     type: 3}
@@ -1311,8 +1312,8 @@ Camera:
   near clip plane: 0.2
   far clip plane: 500
   field of view: 40
-  orthographic: 1
-  orthographic size: 5
+  orthographic: 0
+  orthographic size: 3.59
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -2513,6 +2514,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 8364881365243940841}
   m_PrefabAsset: {fileID: 0}
+--- !u!225 &1072723584
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1072723579}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1085703049
 GameObject:
   m_ObjectHideFlags: 0
@@ -4176,6 +4189,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9005220659476430821, guid: 2d3a85ecde41a8246a79669975912b74,
         type: 3}
+      propertyPath: field of view
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 9005220659476430821, guid: 2d3a85ecde41a8246a79669975912b74,
+        type: 3}
       propertyPath: far clip plane
       value: 500
       objectReference: {fileID: 0}
@@ -4488,7 +4506,7 @@ PrefabInstance:
     - target: {fileID: 8762286023885395322, guid: 9c489a8547f4d9e4387da15a4ff82c81,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8762286023885395322, guid: 9c489a8547f4d9e4387da15a4ff82c81,
         type: 3}
@@ -4647,7 +4665,7 @@ PrefabInstance:
     - target: {fileID: 8364881365389687191, guid: f1eeabcf9dd0e694484c51206b82e412,
         type: 3}
       propertyPath: m_RenderMode
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8364881365389687191, guid: f1eeabcf9dd0e694484c51206b82e412,
         type: 3}

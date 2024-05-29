@@ -7,6 +7,7 @@ namespace Script.Controller.Task.TaskTriggers
 {
     public class PillController : MonoBehaviour
     {
+        // TODO: 这种物品初始化时基于任务系统
         private void Start()
         {
             AddTakePillTask();
@@ -19,16 +20,11 @@ namespace Script.Controller.Task.TaskTriggers
             TaskManager.Instance.AddTask(_takePillTaskName, OnTaskDone);
         }
 
+        private string test = "gaga";
+
         private void OnTaskDone()
         {
-            Debug.Log("达成目标");
+            Debug.Log("达成目标" + test);
         }
-
-
-        // public void OnItemUse()
-        // {
-        //     // 完成任务
-        //     TaskManager.Instance.FinishTask("TakePill");
-        // }
     }
 }

@@ -10,28 +10,28 @@ namespace Script.Controller.Task.TaskTriggers
 {
     public class BedroomDoorController : BaseInteractableController
     {
-        private TaskEntity takePillTask;
+        private TaskEntity _takePillTask;
         private int _count = 0;
 
         private void Start()
         {
-            takePillTask = TaskManager.Instance.GetTask("TakePill");
+            _takePillTask = TaskManager.Instance.GetTask("TakePill");
         }
 
         public override void OnInteract()
         {
             _count++;
-            if (takePillTask == null)
+            if (_takePillTask == null)
             {
-                takePillTask = TaskManager.Instance.GetTask("TakePill");
-                if (takePillTask == null)
+                _takePillTask = TaskManager.Instance.GetTask("TakePill");
+                if (_takePillTask == null)
                 {
                     Debug.LogError("任务不存在: TakePill");
                     return;
                 }
             }
 
-            if (takePillTask.Status == ETaskStatus.Done)
+            if (_takePillTask.Status == ETaskStatus.Done)
             {
                 Debug.Log("打开门,到下一个场景");
             }

@@ -112,7 +112,7 @@ namespace Script.Controller.UI
 
             UpdateSubtitleText(entity.SubtitleText);
             while (elapsedTime < duration)
-            {
+            {   
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }

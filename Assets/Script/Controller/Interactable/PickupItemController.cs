@@ -63,7 +63,7 @@ namespace Script.Controller.Interactable
         {
             BagManager.Instance.OnItemPickup(itemName, this);
             yield return null;
-            gameObject.SetActive(false);
+            Destroy(gameObject);
             yield return null;
         }
     }
