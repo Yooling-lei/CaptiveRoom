@@ -54,7 +54,7 @@ namespace Script.Manager
 
         // 背包中选中的物体
         private ItemInPackage _selectedItem;
-        
+
         private BagSlotController _selectedSlot;
 
         // TODO: 拾取动画中不能打开背包 (不应该在这个类做这个事情,先记着)
@@ -237,7 +237,7 @@ namespace Script.Manager
         {
             Debug.Log("Add Item To Package" + itemName);
             Debug.Log("Add Item To Package" + itemController);
-            
+
             var (found, _, _) = _FindElement(itemName, GameMatrix);
             if (found != null)
             {
@@ -252,19 +252,17 @@ namespace Script.Manager
         private void AddIntoBagMatrix(PickupItemController itemController) =>
             AddIntoBagMatrix(itemController, GameMatrix);
 
-        
+
         private void AddIntoBagMatrix(PickupItemController itemController, Matrix<ItemInPackage> matrix) =>
             AddIntoBagMatrix(itemController.itemName, itemController.gameObject, matrix,
                 itemController.scaleInBag);
 
-        
+
         public void AddIntoBagMatrix(string itemName, GameObject linkGameObject, Matrix<ItemInPackage> matrix,
             float scaleInBag = 1f)
         {
-            // TODO: linkGameObject 是否有使用委托? 添加到ItemInPackage中
             var item = new ItemInPackage(itemName, 1, scaleInBag, linkGameObject);
             var (row, col) = matrix.PushElement(item);
-            // TODO: 这个更新是否交给 new ItemInPackage() 处理?
             item.InitModelInBag(bagRenderCameraController.anchorPoint.transform, row, col,
                 bagRenderCameraController.bagItemOffset);
         }
@@ -276,7 +274,7 @@ namespace Script.Manager
         /// <param name="itemName"></param>
         public void RemoveItemFromPackage(string itemName) => RemoveItemFromPackage(itemName, GameMatrix);
 
-        public void RemoveItemFromPackage(string itemName, Matrix<ItemInPackage> matrix)
+        private static void RemoveItemFromPackage(string itemName, Matrix<ItemInPackage> matrix)
         {
             var (found, row, col) = _FindElement(itemName, matrix);
             if (found == null) return;

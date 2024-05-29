@@ -43,12 +43,25 @@ namespace Script.Entity
 
         public ItemInPackage(string itemName, int count, float scaleInBag, GameObject linkGameObject)
         {
+            InitProperty(itemName, count, scaleInBag, linkGameObject);
+        }
+
+        public ItemInPackage(string itemName, int count, float scaleInBag, GameObject linkGameObject, Transform anchor,
+            int row, int col, float offset)
+        {
+            InitProperty(itemName, count, scaleInBag, linkGameObject);
+            InitModelInBag(anchor, row, col, offset);
+        }
+
+        private void InitProperty(string itemName, int count, float scaleInBag, GameObject linkGameObject)
+        {
             ItemName = itemName;
             Count = count;
             LinkGameObject = linkGameObject;
             ScaleInBag = scaleInBag;
             PickupItemController = linkGameObject.GetComponent<PickupItemController>();
         }
+
 
         #region 视图层更新 (场景 + 角标)
 
@@ -58,7 +71,7 @@ namespace Script.Entity
         public void InitModelInBag(Transform anchor, int row, int col, float offset)
         {
             if (hasModelInBag) return;
-            
+
             var initTarget = PickupItemController?.itemModel ?? LinkGameObject;
             var instance = Object.Instantiate(initTarget, anchor, true);
 
@@ -151,7 +164,7 @@ namespace Script.Entity
         public bool UseItem(ref int count)
         {
             if (!isUsable) return false;
-            
+
             // 若挂载的物体实现了IUsableItem接口,则调用OnItemUse方法
             var usable = LinkGameObject.GetComponent<IUsableItem>();
             usable?.OnItemUse();
