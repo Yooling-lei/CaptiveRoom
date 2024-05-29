@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Script.Enums;
+using Script.Manager;
+using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -117,6 +119,7 @@ public class PlayerFirstPersonController : MonoBehaviour
 
     private void Update()
     {
+        if (!EnableMovement()) return;
         JumpAndGravity();
         GroundedCheck();
         Move();
@@ -124,8 +127,11 @@ public class PlayerFirstPersonController : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (!EnableMovement()) return;
         CameraRotation();
     }
+
+    private static bool EnableMovement() => GameManager.Instance.enableMovement;
 
     private void GroundedCheck()
     {

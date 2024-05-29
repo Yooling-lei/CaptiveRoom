@@ -58,12 +58,13 @@ public class PlayerInputReceiver : MonoBehaviour
         SprintInput(value.isPressed);
     }
 
+    // 按下交互键
     public void OnInteract(InputValue value)
     {
-        Debug.Log("www 按下E");
         InteractAction();
     }
 
+    // 切换背包显示(默认Tab键)
     public void OnToggleBag(InputValue value)
     {
         ToggleBagAction();

@@ -18,31 +18,22 @@ namespace Script.Manager
 {
     public class GameManager : Singleton<GameManager>
     {
-        // public bool cursorLocked = true;
-        // public bool cursorInputForLook = true;
-
-        /**
-         * 对于目前构想的游戏系统,
-         * 除了正常游戏外,
-         * 应只有 物品栏状态,动画状态,对话菜单状态
-         *
-         */
-
-        // 保存游戏实例:   Player, 
-        // 不需要在编辑器初始化
-        [HideInInspector] public GameObject player;
-
-        [HideInInspector] public PlayerInputReceiver playerInputReceiver;
-
-        // 世界空间UI
-        [HideInInspector] public GameObject worldSpaceCanvas;
+        [Header("玩家")] [Tooltip("是否允许玩家移动")] public bool enableMovement = true;
 
         // 默认是否锁定鼠标
         [Header("鼠标设置")] public bool cursorLocked = true;
 
-
         // 控制游戏运行状态, 
-        public EGameStatus gameStatus;
+        public EGameStatus GameStatus { get; set; } = EGameStatus.InProgress;
+
+        // 玩家实例
+        [HideInInspector] public GameObject player;
+
+        // 玩家输入接收器
+        [HideInInspector] public PlayerInputReceiver playerInputReceiver;
+
+        // 世界空间UI
+        [HideInInspector] public GameObject worldSpaceCanvas;
 
         private void Start()
         {
@@ -81,8 +72,8 @@ namespace Script.Manager
 
         public void SwitchGameStatus(EGameStatus status)
         {
-            gameStatus = status;
             // TODO: 暂停时PlayerInput应该被禁用
+            GameStatus = status;
         }
 
         #region 字幕控制
@@ -99,7 +90,7 @@ namespace Script.Manager
 
             subtitleController.AddSubtitleInSequence(subtitle);
         }
-        
+
         #endregion
 
         private void Update()
