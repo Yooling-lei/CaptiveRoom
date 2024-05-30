@@ -1,4 +1,5 @@
 ﻿using System;
+using IngameDebugConsole;
 using Script.Controller.Interactable;
 using Script.Manager;
 using UnityEngine;
@@ -8,10 +9,10 @@ namespace Script.Controller.Task._0_Opening
     public class CupParentController : PuzzleSceneItemController
     {
         [Header("完好杯子")] public Animator cupAnimator;
+        public GameObject normalCup;
         private readonly string _eatPillAnim = "EatPill";
 
-
-        // [Header("破碎杯子")] public EatPillCupController eatPillCupController;
+        [Header("破碎杯子")] public GameObject brokenCup;
 
         private Rigidbody cupRigidbody;
         private bool _isPlayingEating;
@@ -21,9 +22,16 @@ namespace Script.Controller.Task._0_Opening
         {
             cupRigidbody = GetComponent<Rigidbody>();
             if (cupRigidbody != null) cupRigidbody.useGravity = false;
+            DebugLogConsole.AddCommand("EatPill", "EatPill", OnPuzzleSuccess);
         }
-        
+
         private void Update()
+        {
+            // 监测吃药动画结束
+            WatchEatPillAnimation();
+        }
+
+        private void WatchEatPillAnimation()
         {
             if (!_isPlayingEating) return;
             var cut = cupAnimator.GetCurrentAnimatorStateInfo(0);
@@ -33,11 +41,21 @@ namespace Script.Controller.Task._0_Opening
             OnEatPillAnimationEnd();
         }
 
+        private void SyncBrokenCup()
+        {
+            brokenCup.transform.position = normalCup.transform.position;
+        }
+
+
         private void OnCollisionEnter(Collision other)
         {
             if (!_responseCollision) return;
-            Debug.Log("碰撞");
+
             // TODO: 替换成碎玻璃
+            Destroy(cupRigidbody);
+            SyncBrokenCup();
+            normalCup.SetActive(false);
+            brokenCup.SetActive(true);
         }
 
         protected override void OnPuzzleSuccess()
