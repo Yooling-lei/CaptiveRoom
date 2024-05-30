@@ -19,21 +19,6 @@ public class PlayerInputReceiver : MonoBehaviour
     public bool cursorInputForLook = true;
 
 
-    // public void UnlockCursor()
-    // {
-    //     cursorLocked = false;
-    //     SetCursorState(cursorLocked);
-    //     cursorInputForLook = false;
-    // }
-    //
-    // public void LockCursor()
-    // {
-    //     cursorLocked = true;
-    //     SetCursorState(cursorLocked);
-    //     cursorInputForLook = true;
-    // }
-
-
 #if ENABLE_INPUT_SYSTEM
     public void OnMove(InputValue value)
     {
