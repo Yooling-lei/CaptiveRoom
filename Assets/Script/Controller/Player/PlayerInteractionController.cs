@@ -83,7 +83,9 @@ namespace Script.Controller.Player
                 return;
             }
 
-            var interactableController = hit.collider.GetComponent<BaseInteractableController>();
+            var interactableController = hit.collider.GetComponent<BaseInteractableController>() ??
+                                         hit.collider.GetComponentInParent<BaseInteractableController>();
+
             if (interactableController is null)
             {
                 CancelCurrentInteract();

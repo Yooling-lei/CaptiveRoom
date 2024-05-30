@@ -27,7 +27,11 @@ namespace Script.Controller.Interactable
 
         private void OnItemSelect(ItemInPackage item)
         {
-            if (item.ItemName != puzzleNeedItemName) return;
+            if (item.ItemName != puzzleNeedItemName)
+            {
+                Debug.Log("不是这个物体");
+                return;
+            }
 
             // 解密成功,物品栏删除物品
             BagManager.Instance.RemoveItemFromPackage(item.ItemName);
