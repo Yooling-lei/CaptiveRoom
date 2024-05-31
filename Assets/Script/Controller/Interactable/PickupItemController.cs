@@ -18,8 +18,8 @@ namespace Script.Controller.Interactable
         public string itemName;
         public float scaleInBag = 1f;
         public EItemStatus itemStatus = EItemStatus.Normal;
-        public GameObject itemModel;
-
+        public float flyTime = 1f;
+        
         private Collider _collider;
 
         protected override void Awake()
@@ -47,14 +47,13 @@ namespace Script.Controller.Interactable
 
         private IEnumerator FlyToPlayer()
         {
-            var time = 0.5f;
             var elapsedTime = 0.0f;
             var startPos = transform.position;
             var targetPos = GameManager.Instance.player.transform.position;
-            while (elapsedTime < time)
+            while (elapsedTime < flyTime)
             {
                 elapsedTime += Time.deltaTime;
-                transform.position = Vector3.Lerp(startPos, targetPos, elapsedTime / time);
+                transform.position = Vector3.Lerp(startPos, targetPos, elapsedTime / flyTime);
                 yield return null;
             }
         }

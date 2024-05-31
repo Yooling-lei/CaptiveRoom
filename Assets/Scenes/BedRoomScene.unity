@@ -1053,6 +1053,9 @@ MonoBehaviour:
   bagSlotParent: {fileID: 1691918594}
   selectSlotImage: {fileID: 712366061220620584, guid: 1e6105d2d0cfd114fbd095bf597a124b,
     type: 3}
+  PrefabPairArray:
+  - key: Pill
+    value: {fileID: 5546620094615316756, guid: 7f30f8b8887610748893b33b51e42249, type: 3}
   bagRenderCameraController: {fileID: 0}
   bagRenderCamera: {fileID: 0}
   slotButtons: []
@@ -2356,8 +2359,7 @@ MonoBehaviour:
   itemName: BrokenCup
   scaleInBag: 0.6
   itemStatus: 0
-  itemModel: {fileID: 756688998110874519, guid: a8f969267cc07df409f3cc7c828d00e4,
-    type: 3}
+  flyTime: 1
 --- !u!65 &932650818
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -47,35 +47,30 @@ namespace Script.Controller.Task._0_Opening
         }
 
 
+        // 杯子摔倒地上 (生成碎玻璃和下个任务)
         private void OnCollisionEnter(Collision other)
         {
             if (!_responseCollision) return;
-
-            // TODO: 替换成碎玻璃
+            // 替换成碎玻璃杯
             Destroy(cupRigidbody);
             SyncBrokenCup();
             normalCup.SetActive(false);
             brokenCup.SetActive(true);
+            NextTask();
         }
 
         protected override void OnPuzzleSuccess()
         {
             base.OnPuzzleSuccess();
             // 完成TakePill任务,开始播放动画
-            // TaskManager.Instance.FinishTask("TakePill");
             cupAnimator.Play(_eatPillAnim);
             _isPlayingEating = true;
-            // Destroy(GetComponent<BoxCollider>());
         }
 
         private void OnEatPillAnimationEnd()
         {
             cupRigidbody.useGravity = true;
             _responseCollision = true;
-            // TODO: 播放摔碎杯子动画
-            // TODO: 播放恐怖音效
-            // 播放完后,生成碎玻璃GameObject,触发下个任务
-            NextTask();
         }
 
         private void NextTask()

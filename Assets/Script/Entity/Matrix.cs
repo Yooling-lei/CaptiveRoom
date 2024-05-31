@@ -1,5 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Script.Entity
@@ -10,11 +11,11 @@ namespace Script.Entity
         /// 目前背包定一个简单的功能:
         /// 只有拾取和使用,没有排序等功能
         /// </summary>
-        private T[,] _data;
+        [JsonProperty] private T[,] _data;
 
-        public int RowCount { get; }
+        public int RowCount => _data?.GetLength(0) ?? 0;
 
-        public int ColumnCount { get; }
+        public int ColumnCount => _data?.GetLength(1) ?? 0;
 
         // 表示接下来设置的元素的行数(减少判断次数)
         public int CurrentRow { get; private set; } = 0;
@@ -32,9 +33,13 @@ namespace Script.Entity
 
         public Matrix(int rows, int columns)
         {
-            RowCount = rows;
-            ColumnCount = columns;
             _data = new T[rows, columns];
+            Debug.Log("new matrix");
+        }
+
+        public Matrix()
+        {
+            Debug.Log("new matrix innn");
         }
 
 

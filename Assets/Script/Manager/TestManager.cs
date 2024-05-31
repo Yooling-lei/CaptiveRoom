@@ -17,87 +17,37 @@ public class TestManager : Singleton<TestManager>
     public List<GameObject> testInBagItem;
     public GameObject testRawImage;
     public Camera testCamera;
-
-    public void testCalculate(Vector2 mousePoint)
-    {
-        // 获取 rawImage的宽高
-        var width = testRawImage.GetComponent<RectTransform>().rect.width;
-        var height = testRawImage.GetComponent<RectTransform>().rect.height;
-        Debug.Log("width: " + width + " height: " + height);
-
-        // 范围: 中心点位 + - 宽高的一半
-        var pointPosition = testRawImage.transform.position;
-        var xRange = new Vector2(pointPosition.x - width / 2, pointPosition.x + width / 2);
-        var yRange = new Vector2(pointPosition.y - height / 2, pointPosition.y + height / 2);
-        Debug.Log("Range:" + xRange + " " + yRange);
-
-        // 判断是否在范围内
-        if (mousePoint.x > xRange.x && mousePoint.x < xRange.y && mousePoint.y > yRange.x && mousePoint.y < yRange.y)
-        {
-            Debug.Log("In Range");
-        }
-        else
-        {
-            Debug.Log("Out Range");
-        }
-    }
+    
 
     private void Update()
     {
-        if (Mouse.current.leftButton.isPressed)
-        {
-            var mousePos = Mouse.current.position.ReadValue();
-            // testCalculate(mousePos);
-            Vector3 worldPos = testCamera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 10));
-            // Debug.Log("worldPos: " + worldPos);
-        }
+
     }
 
 
     void Start()
     {
-        // DebugLogConsole.AddCommand("AddItem", "Add Item In To Bag", TestAddToBag);
-        // DebugLogConsole.AddCommand<string>("RemoveItem", "Remove an item from the backpack.", TestRemoveElement);
-        // TestAddToBag();
-        DebugLogConsole.AddCommand<string>("UseItem", "Use an item from the backpack.", TestUseItem);
+
+        DebugLogConsole.AddCommand("save", "Save", SaveManager.SaveData);
+        // StartCoroutine(TestSave());
+        // StartCoroutine(TestGet());
     }
 
-
-    private void TestAddToBag()
+    private IEnumerator TestSave()
     {
-        TestAddToBag2("test1");
-        TestAddToBag2("test1");
-        TestAddToBag2("test1");
-        TestAddToBag2("test2");
-        TestAddToBag2("test3");
-        TestAddToBag2("test3");
-        TestAddToBag2("test4");
-        TestAddToBag2("test5");
-        TestAddToBag2("test5");
+        yield return new WaitForSeconds(1);
+        SaveManager.SaveData();
     }
+
+    private IEnumerator TestGet()
+    {
+        yield return new WaitForSeconds(3);
+        SaveManager.SaveData();
+    }
+
 
     private void TestUseItem(string testName)
     {
         BagManager.Instance.UseItemInBag(testName);
-    }
-
-    private void TestAddToBag2(string testName)
-    {
-        // testName最后一位转换为数字
-        var lastChar = testName.Last();
-        var lastNum = int.Parse(lastChar.ToString());
-        var item = testInBagItem[lastNum];
-
-        var matrix = BagManager.Instance.GameMatrix;
-        var (found, _, _) = BagManager._FindElement(testName, matrix);
-        if (found != null)
-        {
-            found.Count++;
-            found.RefreshCountText();
-        }
-        else
-        {
-            BagManager.Instance.AddIntoBagMatrix(testName, item, matrix);
-        }
     }
 }

@@ -27,9 +27,6 @@ namespace Script.Manager
      */
     public class BagManager : Singleton<BagManager>
     {
-        // 背包UI Canvas
-        // public GameObject bagCanvas;
-
         public CanvasGroup bagCanvasGroup;
 
         // 背包UI 格子父物体
@@ -38,8 +35,20 @@ namespace Script.Manager
         // 背包 格子预制件
         public GameObject selectSlotImage;
 
+        // 背包 注册的背包内物品
+        private readonly Dictionary<string, GameObject> _registeredPrefab = new();
+
+        [Serializable]
+        public struct KeyValuePair
+        {
+            public string key;
+            public GameObject value;
+        }
+
+        public KeyValuePair[] PrefabPairArray;
+
         // 背包的存储矩阵
-        public readonly Matrix<ItemInPackage> GameMatrix = new(4, 3);
+        public readonly Matrix<ItemInPackage> BagMatrix = new(4, 3);
 
         // 背包场景摄像机控制器
         [HideInInspector] public BagRenderCamera bagRenderCameraController;
@@ -69,8 +78,22 @@ namespace Script.Manager
         private void Start()
         {
             // Debug.Log("设置背包隐藏");
+
+
+            RegisterPrefabInBag();
             RegisterSlotButtons();
             ToggleBagVisible(false);
+        }
+
+        private void RegisterPrefabInBag()
+        {
+            foreach (var kvp in PrefabPairArray)
+            {
+                if (!_registeredPrefab.ContainsKey(kvp.key))
+                {
+                    _registeredPrefab.Add(kvp.key, kvp.value);
+                }
+            }
         }
 
 
@@ -87,7 +110,7 @@ namespace Script.Manager
         private void RegisterSlotButtons()
         {
             var buttons = bagSlotParent.GetComponentsInChildren<BagSlotController>();
-            buttons.Each((x, i) => { RegisterSlotButton(x, i, GameMatrix.ColumnCount); });
+            buttons.Each((x, i) => { RegisterSlotButton(x, i, BagMatrix.ColumnCount); });
         }
 
 
@@ -115,7 +138,7 @@ namespace Script.Manager
         /// </summary>
         private void OnSlotClick(int index, int row, int col)
         {
-            var item = GameMatrix.GetElement(row, col);
+            var item = BagMatrix.GetElement(row, col);
             _selectedSlot = slotButtons[index];
 
             if (item == null)
@@ -171,7 +194,7 @@ namespace Script.Manager
         /// <returns></returns>
         public int UseItemInBag(string itemName)
         {
-            var (item, _, _) = _FindElement(itemName, GameMatrix);
+            var (item, _, _) = _FindElement(itemName, BagMatrix);
             return UseItemInBag(item);
         }
 
@@ -238,7 +261,7 @@ namespace Script.Manager
             Debug.Log("Add Item To Package" + itemName);
             Debug.Log("Add Item To Package" + itemController);
 
-            var (found, _, _) = _FindElement(itemName, GameMatrix);
+            var (found, _, _) = _FindElement(itemName, BagMatrix);
             if (found != null)
             {
                 found.CountPlus();
@@ -250,21 +273,22 @@ namespace Script.Manager
         }
 
         private void AddIntoBagMatrix(PickupItemController itemController) =>
-            AddIntoBagMatrix(itemController, GameMatrix);
+            AddIntoBagMatrix(itemController, BagMatrix);
 
 
         private void AddIntoBagMatrix(PickupItemController itemController, Matrix<ItemInPackage> matrix) =>
-            AddIntoBagMatrix(itemController.itemName, itemController.gameObject, matrix,
-                itemController.scaleInBag);
+            AddIntoBagMatrix(itemController.itemName, matrix, itemController.scaleInBag);
 
 
-        public void AddIntoBagMatrix(string itemName, GameObject linkGameObject, Matrix<ItemInPackage> matrix,
+        public void AddIntoBagMatrix(string itemName, Matrix<ItemInPackage> matrix,
             float scaleInBag = 1f)
         {
-            var item = new ItemInPackage(itemName, 1, scaleInBag, linkGameObject);
+            var item = new ItemInPackage(itemName, 1, scaleInBag);
             var (row, col) = matrix.PushElement(item);
-            item.InitModelInBag(bagRenderCameraController.anchorPoint.transform, row, col,
-                bagRenderCameraController.bagItemOffset);
+            var anchor = bagRenderCameraController.anchorPoint.transform;
+            var offset = bagRenderCameraController.bagItemOffset;
+
+            item.InitModelInBag(anchor, getPrefabInBag(itemName), row, col, offset);
         }
 
 
@@ -272,7 +296,7 @@ namespace Script.Manager
         /// 从背包中移除一个物体
         /// </summary>
         /// <param name="itemName"></param>
-        public void RemoveItemFromPackage(string itemName) => RemoveItemFromPackage(itemName, GameMatrix);
+        public void RemoveItemFromPackage(string itemName) => RemoveItemFromPackage(itemName, BagMatrix);
 
         private static void RemoveItemFromPackage(string itemName, Matrix<ItemInPackage> matrix)
         {
@@ -293,6 +317,8 @@ namespace Script.Manager
         public static (ItemInPackage data, int x, int y) _FindElement(string itemName,
             Matrix<ItemInPackage> matrix) =>
             matrix.FindElement(x => x != null && x.ItemName == itemName);
+
+        public GameObject getPrefabInBag(string itemName) => _registeredPrefab[itemName];
 
         #endregion
     }

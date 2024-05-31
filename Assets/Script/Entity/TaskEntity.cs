@@ -8,7 +8,5 @@ namespace Script.Entity
         public string Title { get; set; }
 
         public ETaskStatus Status { get; set; }
-
-        public Action Action { get; set; }
     }
 }

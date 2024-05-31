@@ -10,26 +10,43 @@ namespace Script.Manager
     {
         // public List<TaskEntity> taskEntities = new List<TaskEntity>();
         public Dictionary<string, TaskEntity> taskEntities = new Dictionary<string, TaskEntity>();
-        
+        public Dictionary<string, Action> taskActions = new Dictionary<string, Action>();
+
         private void OnEnable()
         {
         }
 
-        public void AddTask(string title, Action action = null)
+        public void AddTask(string title)
         {
             taskEntities.Add(title, new TaskEntity()
             {
                 Title = title,
                 Status = ETaskStatus.UnStart,
-                Action = action
             });
+        }
+
+        /// <summary>
+        /// 订阅任务完成事件
+        /// </summary>
+        /// <param name="title">任务主键</param>
+        /// <param name="action">任务完成时触发委托</param>
+        public void ListenTask(string title, Action action)
+        {
+            if (!taskEntities.ContainsKey(title)) return;
+            if (taskActions.ContainsKey(title))
+                taskActions[title] += action;
+            else
+                taskActions.Add(title, action);
         }
 
         public void FinishTask(string title)
         {
             if (!taskEntities.ContainsKey(title)) return;
             taskEntities[title].Status = ETaskStatus.Done;
-            taskEntities[title].Action?.Invoke();
+            if (taskActions.ContainsKey(title))
+            {
+                taskActions[title]?.Invoke();
+            }
         }
 
         public TaskEntity GetTask(string title)
@@ -37,12 +54,10 @@ namespace Script.Manager
             if (!taskEntities.ContainsKey(title)) return null;
             return taskEntities[title];
         }
-        
-        
+
+
         // 游戏进程:
         // 1-1, 
         // 读取存档,发现是1-1
-        
-        
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using Script.Controller.Interactable;
 using Script.Interface;
 using Script.Manager;
@@ -11,55 +12,64 @@ namespace Script.Entity
 {
     public class ItemInPackage
     {
+        // 道具名称
         public string ItemName { get; set; }
 
+        // 道具数量
         public int Count { get; set; }
 
+        // 在背包的缩放比例
         public float ScaleInBag { get; set; } = 1;
 
-        // public Vector2 BagIndex { get; set; }
-
+        // 在背包中的行
         public int BagRow { get; set; }
 
+        // 在背包中的列
         public int BagCol { get; set; }
 
+        // 物体在背包中的偏移量
         public float ItemOffset { get; set; }
 
-        // 关联的GameObject
-        public GameObject LinkGameObject { get; set; }
 
-        public PickupItemController PickupItemController { get; set; }
 
-        // 在背包场景的GameObject
-        public GameObject ModelInBag { get; set; }
+        // 在背包场景的 GameObject
+        [JsonIgnore] public GameObject ModelInBag { get; set; }
 
-        // private Action onUse;
+        [JsonIgnore] private TextMeshProUGUI CountText { get; set; }
+
+        // 是否可用
         private bool isUsable = false;
-        private TextMeshProUGUI CountText { get; set; }
-
+        
+        // 角标的偏移量
         private Vector3 Offset { get; set; } = new Vector3(-0.3f, 1, -0.3f);
 
+        // 是否已经在背包中生成了模型
         private bool hasModelInBag = false;
 
-        public ItemInPackage(string itemName, int count, float scaleInBag, GameObject linkGameObject)
-        {
-            InitProperty(itemName, count, scaleInBag, linkGameObject);
-        }
 
-        public ItemInPackage(string itemName, int count, float scaleInBag, GameObject linkGameObject, Transform anchor,
+        public ItemInPackage(){}
+        
+        // 构造函数
+        public ItemInPackage(string itemName, int count, float scaleInBag)
+        {
+            InitProperty(itemName, count, scaleInBag);
+        }
+        
+
+        public ItemInPackage(string itemName, int count, float scaleInBag, Transform anchor,
+            GameObject prefabInBag,
             int row, int col, float offset)
         {
-            InitProperty(itemName, count, scaleInBag, linkGameObject);
-            InitModelInBag(anchor, row, col, offset);
+            InitProperty(itemName, count, scaleInBag);
+            InitModelInBag(anchor, prefabInBag, row, col, offset);
         }
 
-        private void InitProperty(string itemName, int count, float scaleInBag, GameObject linkGameObject)
+        // 初始化属性
+        private void InitProperty(string itemName, int count, float scaleInBag)
         {
             ItemName = itemName;
             Count = count;
-            LinkGameObject = linkGameObject;
             ScaleInBag = scaleInBag;
-            PickupItemController = linkGameObject.GetComponent<PickupItemController>();
         }
 
 
@@ -68,12 +78,11 @@ namespace Script.Entity
         /// <summary>
         /// 在背包场景生成旋转的物体模型 
         /// </summary>
-        public void InitModelInBag(Transform anchor, int row, int col, float offset)
+        public void InitModelInBag(Transform anchor, GameObject prefabInBag, int row, int col, float offset)
         {
             if (hasModelInBag) return;
 
-            var initTarget = PickupItemController?.itemModel ?? LinkGameObject;
-            var instance = Object.Instantiate(initTarget, anchor, true);
+            var instance = Object.Instantiate(prefabInBag, anchor, true);
 
             // 计算物体位置
             ItemOffset = offset;
@@ -166,8 +175,8 @@ namespace Script.Entity
             if (!isUsable) return false;
 
             // 若挂载的物体实现了IUsableItem接口,则调用OnItemUse方法
-            var usable = LinkGameObject.GetComponent<IUsableItem>();
-            usable?.OnItemUse();
+            // var usable = LinkGameObject.GetComponent<IUsableItem>();
+            // usable?.OnItemUse();
             CountMinus();
             count = Count;
             return true;

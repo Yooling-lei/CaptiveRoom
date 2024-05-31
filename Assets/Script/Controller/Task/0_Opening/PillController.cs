@@ -17,7 +17,8 @@ namespace Script.Controller.Task.TaskTriggers
 
         private void AddTakePillTask()
         {
-            TaskManager.Instance.AddTask(_takePillTaskName, OnTaskDone);
+            TaskManager.Instance.AddTask(_takePillTaskName);
+            TaskManager.Instance.ListenTask(_takePillTaskName, OnTaskDone);
         }
 
         private string test = "gaga";
