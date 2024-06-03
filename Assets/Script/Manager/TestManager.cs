@@ -17,20 +17,17 @@ public class TestManager : Singleton<TestManager>
     public List<GameObject> testInBagItem;
     public GameObject testRawImage;
     public Camera testCamera;
-    
+
 
     private void Update()
     {
-
     }
 
 
     void Start()
     {
-
         DebugLogConsole.AddCommand("save", "Save", SaveManager.SaveData);
-        // StartCoroutine(TestSave());
-        // StartCoroutine(TestGet());
+        DebugLogConsole.AddCommand("load", "Save", SaveManager.LoadData);
     }
 
     private IEnumerator TestSave()

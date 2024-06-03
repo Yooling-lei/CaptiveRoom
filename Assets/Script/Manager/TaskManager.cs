@@ -12,10 +12,6 @@ namespace Script.Manager
         public Dictionary<string, TaskEntity> taskEntities = new Dictionary<string, TaskEntity>();
         public Dictionary<string, Action> taskActions = new Dictionary<string, Action>();
 
-        private void OnEnable()
-        {
-        }
-
         public void AddTask(string title)
         {
             taskEntities.Add(title, new TaskEntity()

@@ -19,6 +19,12 @@ namespace Script.Manager
         Select
     }
 
+    public enum EBagSelectMode
+    {
+        Single,
+        Multiple
+    }
+
     /**
      * 设计逻辑:
      * BagManager负责背包矩阵存储的管理 (以及格子UI)  ,抛出 "拾取物体"  "删除物体" 的接口
@@ -61,10 +67,18 @@ namespace Script.Manager
 
         private bool _isShowingBag = false;
 
-        // 背包中选中的物体
+        // 单选时: 背包中选中的物体
         private ItemInPackage _selectedItem;
 
+        // 单选时: 背包中选中的格子
         private BagSlotController _selectedSlot;
+
+        // 多选时: 选中的物体
+        private List<ItemInPackage> _selectedItems = new();
+
+        // 多选时: 选中的格子
+        private List<BagSlotController> _selectedSlots = new();
+
 
         // TODO: 拾取动画中不能打开背包 (不应该在这个类做这个事情,先记着)
         private bool _couldOpenBag;
@@ -72,14 +86,14 @@ namespace Script.Manager
         private EBagBehavior _bagBehavior = EBagBehavior.Normal;
 
         private Action<ItemInPackage> _onSelectItem;
-        public void RegisterSelectItemAction(Action<ItemInPackage> onSelectItem) => _onSelectItem = onSelectItem;
+
+        // 背包选中模式: 单选/多选
+        private EBagSelectMode _bagSelectMode = EBagSelectMode.Single;
+        private bool isSingleSelect => _bagSelectMode == EBagSelectMode.Single;
 
 
         private void Start()
         {
-            // Debug.Log("设置背包隐藏");
-
-
             RegisterPrefabInBag();
             RegisterSlotButtons();
             ToggleBagVisible(false);
@@ -139,23 +153,47 @@ namespace Script.Manager
         private void OnSlotClick(int index, int row, int col)
         {
             var item = BagMatrix.GetElement(row, col);
-            _selectedSlot = slotButtons[index];
-
-            if (item == null)
+            if (isSingleSelect)
             {
-                _selectedItem = null;
+                _selectedSlot = slotButtons[index];
+
+                if (item == null)
+                {
+                    _selectedItem = null;
+                }
+                else
+                {
+                    var controller = slotButtons[index];
+                    controller.ChangeColor(true);
+                    _selectedItem = item;
+                }
             }
             else
             {
-                var controller = slotButtons[index];
-                controller.ChangeColor(true);
-                _selectedItem = item;
+                if (item == null) return;
+
+                if (_selectedItems.Contains(item))
+                {
+                    _selectedItems.Remove(item);
+                    _selectedSlots.Remove(slotButtons[index]);
+                }
+                else
+                {
+                    _selectedItems.Add(item);
+                    _selectedSlots.Add(slotButtons[index]);
+                }
             }
+
 
             // 更新UI
             RefreshSlotColor();
         }
 
+        /// <summary>
+        /// 注册选中物品行为
+        /// </summary>
+        /// <param name="onSelectItem"></param>
+        public void RegisterSelectItemAction(Action<ItemInPackage> onSelectItem) => _onSelectItem = onSelectItem;
 
         /// <summary>
         /// 背包内交互键触发
@@ -246,7 +284,14 @@ namespace Script.Manager
         /// </summary>
         private void RefreshSlotColor()
         {
-            slotButtons.Each((x, _) => x.ChangeColor(_selectedSlot != null && x == _selectedSlot));
+            if (_bagSelectMode == EBagSelectMode.Single)
+            {
+                slotButtons.Each((x, _) => x.ChangeColor(_selectedSlot != null && x == _selectedSlot));
+            }
+            else if (_bagSelectMode == EBagSelectMode.Multiple)
+            {
+                slotButtons.Each((x, _) => x.ChangeColor(_selectedSlots.Exists(y => x == y)));
+            }
         }
 
         #endregion

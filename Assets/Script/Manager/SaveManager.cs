@@ -28,11 +28,10 @@ namespace Script.Manager
             var output = JsonConvert.SerializeObject(saveDataEntity);
             File.WriteAllText(SavePath + "data.json", output);
 
-            GetSaveData();
         }
 
 
-        public static void GetSaveData()
+        public static void LoadData()
         {
             // 1.task进度
             var path = SavePath + "data.json";
