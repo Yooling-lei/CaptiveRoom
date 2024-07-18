@@ -23,7 +23,7 @@ namespace Script.Manager
         // 默认是否锁定鼠标
         [Header("鼠标设置")] public bool cursorLocked = true;
 
-        // 控制游戏运行状态, 
+        // 控制游戏运行状态
         public EGameStatus GameStatus { get; set; } = EGameStatus.InProgress;
 
         // 玩家实例
@@ -92,36 +92,5 @@ namespace Script.Manager
         }
 
         #endregion
-
-        private void Update()
-        {
-            // FIXME: UI总体控制
-            // UpdateBagVisible();
-
-            // if (Mouse.current.leftButton.isPressed)
-            // {
-            //     // 获取鼠标位置
-            //     var mousePos = Mouse.current.position.ReadValue();
-            //     // 世界坐标转换为屏幕坐标
-            //     // var screenPos = Camera.main.WorldToScreenPoint(mousePos);
-            //
-            //     EventSystem eventSystem = EventSystem.current;
-            //     PointerEventData eventData = new PointerEventData(eventSystem);
-            //     eventData.position = mousePos;
-            //
-            //     // 检测是否点击到UI
-            //     if (eventSystem.IsPointerOverGameObject())
-            //     {
-            //         Debug.Log("点击到UI");
-            //     }
-            //     else
-            //     {
-            //         Debug.Log("点击到场景");
-            //     }
-            //
-            //
-            //     Debug.Log("screen Pos" + mousePos);
-            // }
-        }
     }
 }

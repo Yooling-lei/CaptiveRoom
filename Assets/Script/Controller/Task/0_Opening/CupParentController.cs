@@ -63,6 +63,8 @@ namespace Script.Controller.Task._0_Opening
         {
             base.OnPuzzleSuccess();
             // 完成TakePill任务,开始播放动画
+            TaskManager.Instance.FinishTask("TakePill");
+            // TODO: 播放音效
             cupAnimator.Play(_eatPillAnim);
             _isPlayingEating = true;
         }

@@ -51,6 +51,7 @@ namespace Script.Manager
             public GameObject value;
         }
 
+        // TODO: 有点麻烦 后面看是否用脚本控制模型 
         public KeyValuePair[] PrefabPairArray;
 
         // 背包的存储矩阵
@@ -243,6 +244,15 @@ namespace Script.Manager
             return count;
         }
 
+        /// <summary>
+        /// 融合选中的物品
+        /// </summary>
+        public void MergeSelectItems()
+        {
+            // 1.判断能不能融合
+            // 2.若可以,删除选中的物品,添加新的物品到背包
+        }
+
         #endregion
 
 
@@ -284,13 +294,15 @@ namespace Script.Manager
         /// </summary>
         private void RefreshSlotColor()
         {
-            if (_bagSelectMode == EBagSelectMode.Single)
+            switch (_bagSelectMode)
             {
-                slotButtons.Each((x, _) => x.ChangeColor(_selectedSlot != null && x == _selectedSlot));
-            }
-            else if (_bagSelectMode == EBagSelectMode.Multiple)
-            {
-                slotButtons.Each((x, _) => x.ChangeColor(_selectedSlots.Exists(y => x == y)));
+                default:
+                case EBagSelectMode.Single:
+                    slotButtons.Each((x, _) => x.ChangeColor(_selectedSlot != null && x == _selectedSlot));
+                    break;
+                case EBagSelectMode.Multiple:
+                    slotButtons.Each((x, _) => x.ChangeColor(_selectedSlots.Exists(y => x == y)));
+                    break;
             }
         }
 
