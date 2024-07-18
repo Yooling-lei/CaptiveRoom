@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using IngameDebugConsole;
+using Script.Controller.Interactable;
 using Script.Entity;
 using Script.Manager;
 using UnityEngine;
@@ -14,21 +15,30 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class TestManager : Singleton<TestManager>
 {
-    public List<GameObject> testInBagItem;
+    public List<PickupItemController> testInBagItem;
     public GameObject testRawImage;
     public Camera testCamera;
-
-
-    private void Update()
-    {
-    }
-
+    
 
     void Start()
     {
         DebugLogConsole.AddCommand("save", "Save", SaveManager.SaveData);
         DebugLogConsole.AddCommand("load", "Save", SaveManager.LoadData);
+        DebugLogConsole.AddCommand("add", "AddItemToBag", AddTestItemToBag);
     }
+
+    private void AddTestItemToBag()
+    {
+        BagManager.Instance.SetBagSelectMode(EBagSelectMode.Multiple);
+        // BagManager.Instance._b
+        // 1. 破碎杯子
+        // 2. 胶水
+        foreach (var item in testInBagItem)
+        {
+            BagManager.Instance.AddItemToPackage(item.itemName, item);
+        }
+    }
+
 
     private IEnumerator TestSave()
     {

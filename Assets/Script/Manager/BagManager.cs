@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Script.Controller.Common;
 using Script.Controller.Interactable;
 using Script.Controller.UI;
 using Script.Entity;
 using Script.Extension;
+using Script.Interface;
 using Script.Tools;
 using UnityEngine;
 using UnityEngine.Events;
@@ -142,6 +144,8 @@ namespace Script.Manager
 
         #region 抛出方法
 
+        public void SetBagSelectMode(EBagSelectMode mode) => _bagSelectMode = mode;
+
         /// <summary>
         /// 当可拾取物体触发拾取函数 
         /// </summary>
@@ -201,6 +205,14 @@ namespace Script.Manager
         /// </summary>
         public void OnInteractTrigger()
         {
+            Debug.Log("Use Item In Bag");
+            Debug.Log(_bagBehavior);
+            if (isSingleSelect) OnSingleInteractTrigger();
+            else OnMultipleInteractTrigger();
+        }
+
+        private void OnSingleInteractTrigger()
+        {
             if (_selectedItem == null) return;
 
             // 普通模式下,使用物品
@@ -217,7 +229,25 @@ namespace Script.Manager
             }
         }
 
-        public void RemoveSelectedItem()
+        private void OnMultipleInteractTrigger()
+        {
+            if (_selectedItems.Count == 0) return;
+            Debug.Log("Merge Items");
+
+            var mergeableItem = _selectedItems
+                .Select(item => item.ModelInBag?.GetComponent<IMergeableItem>())
+                .FirstOrDefault(mergeable => mergeable is not null);
+            if (mergeableItem is null) return;
+
+            var couldMerge = mergeableItem.MergeCheck(_selectedItems);
+            Debug.Log("Could Merge: " + couldMerge);
+            
+            if (couldMerge) mergeableItem.OnMergeSuccess();
+            else mergeableItem.OnMergeCheckFailed();
+            
+        }
+
+        private void RemoveSelectedItem()
         {
             if (_selectedItem == null) return;
             RemoveItemFromPackage(_selectedItem.ItemName);

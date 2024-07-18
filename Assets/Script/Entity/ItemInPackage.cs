@@ -31,7 +31,6 @@ namespace Script.Entity
         public float ItemOffset { get; set; }
 
 
-
         // 在背包场景的 GameObject
         [JsonIgnore] public GameObject ModelInBag { get; set; }
 
@@ -39,7 +38,7 @@ namespace Script.Entity
 
         // 是否可用
         private bool isUsable = false;
-        
+
         // 角标的偏移量
         private Vector3 Offset { get; set; } = new Vector3(-0.3f, 1, -0.3f);
 
@@ -47,14 +46,16 @@ namespace Script.Entity
         private bool hasModelInBag = false;
 
 
-        public ItemInPackage(){}
-        
+        public ItemInPackage()
+        {
+        }
+
         // 构造函数
         public ItemInPackage(string itemName, int count, float scaleInBag)
         {
             InitProperty(itemName, count, scaleInBag);
         }
-        
+
 
         public ItemInPackage(string itemName, int count, float scaleInBag, Transform anchor,
             GameObject prefabInBag,

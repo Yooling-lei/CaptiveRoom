@@ -23,11 +23,10 @@ namespace Script.Manager
                 tasks = TaskManager.Instance.taskEntities,
                 bag = BagManager.Instance.BagMatrix
             };
-            
-            
+
+
             var output = JsonConvert.SerializeObject(saveDataEntity);
             File.WriteAllText(SavePath + "data.json", output);
-
         }
 
 
@@ -40,13 +39,7 @@ namespace Script.Manager
 
 
             Debug.Log("read.........." + saveDataEntity);
-
         }
-
-        // public static void TestFunc()
-        // {
-        //     string testVal  = ""
-        // }
 
 
         // 1.TaskManager.taskEntities

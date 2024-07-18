@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using Script.Entity;
 using Script.Enums;
+using UnityEngine;
 
 namespace Script.Manager
 {
@@ -38,6 +39,8 @@ namespace Script.Manager
         public void FinishTask(string title)
         {
             if (!taskEntities.ContainsKey(title)) return;
+            Debug.Log("Finish Task: " + title);
+            
             taskEntities[title].Status = ETaskStatus.Done;
             if (taskActions.ContainsKey(title))
             {
