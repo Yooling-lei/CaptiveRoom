@@ -80,7 +80,7 @@ namespace Script.Manager
 
         public SubtitleController subtitleController;
 
-        public void AddSubtitleToPlay(SubtitleEntity subtitle)
+        public void AddSubtitleToPlay(SubtitleEntity subtitle, bool breakCurrent = false)
         {
             if (subtitleController == null)
             {
@@ -88,7 +88,7 @@ namespace Script.Manager
                 return;
             }
 
-            subtitleController.AddSubtitleInSequence(subtitle);
+            subtitleController.AddSubtitleInSequence(subtitle, breakCurrent);
         }
 
         #endregion

@@ -11,53 +11,82 @@ namespace Script.Controller.Task.TaskTriggers
     public class BedroomDoorController : BaseInteractableController
     {
         private TaskEntity _takePillTask;
+        private TaskEntity _fixCupTask;
         private int _count = 0;
 
-        private void Start()
+
+        private TaskEntity GetTask(string title)
         {
-            _takePillTask = TaskManager.Instance.GetTask("TakePill");
+            switch (title)
+            {
+                case "TakePill":
+                    return _takePillTask ??= TaskManager.Instance.GetTask(title);
+                case "FixCup":
+                    return _fixCupTask ??= TaskManager.Instance.GetTask(title);
+            }
+
+            return null;
         }
 
         public override void OnInteract()
         {
             _count++;
-            if (_takePillTask == null)
-            {
-                _takePillTask = TaskManager.Instance.GetTask("TakePill");
-                if (_takePillTask == null)
-                {
-                    Debug.LogError("任务不存在: TakePill");
-                    return;
-                }
-            }
 
-            if (_takePillTask.Status == ETaskStatus.Done)
+            var pillTask = GetTask("TakePill");
+            if (pillTask == null) return;
+
+            if (pillTask.Status != ETaskStatus.Done)
             {
-                Debug.Log("打开门,到下一个场景");
+                AlertNotTakePill(_count);
             }
             else
             {
-                if (_count == 1)
+                var fixCupTask = GetTask("FixCup");
+                if (fixCupTask == null) return;
+
+                if (fixCupTask.Status == ETaskStatus.Done)
                 {
-                    var subtitle = new SubtitleEntity()
-                    {
-                        Key = "TakePillFirst",
-                        SubtitleText = "I need to take the pill first.",
-                        Duration = 3.0f
-                    };
-                    GameManager.Instance.AddSubtitleToPlay(subtitle);
+                    Debug.Log("前往下一个场景");
+                    return;
                 }
-                else
-                {
-                    var subtitle = new SubtitleEntity()
-                    {
-                        Key = "TakePillFirst2",
-                        SubtitleText = "NO, I really need to take the pill first.",
-                        Duration = 3.0f
-                    };
-                    GameManager.Instance.AddSubtitleToPlay(subtitle);
-                }
+
+                AlertFixCup(_count);
             }
+        }
+
+        private void AlertNotTakePill(int count)
+        {
+            if (count == 1)
+            {
+                var subtitle = new SubtitleEntity()
+                {
+                    Key = "TakePillFirst",
+                    SubtitleText = "I need to take the pill first.",
+                    Duration = 8.0f
+                };
+                GameManager.Instance.AddSubtitleToPlay(subtitle);
+            }
+            else
+            {
+                var subtitle = new SubtitleEntity()
+                {
+                    Key = "TakePillFirst2",
+                    SubtitleText = "NO, I really need to take the pill first.",
+                    Duration = 3.0f
+                };
+                GameManager.Instance.AddSubtitleToPlay(subtitle, true);
+            }
+        }
+
+        private void AlertFixCup(int count)
+        {
+            var subtitle = new SubtitleEntity()
+            {
+                Key = "FixCup",
+                SubtitleText = "Come on, I  need to fix the mass.",
+                Duration = 3.0f
+            };
+            GameManager.Instance.AddSubtitleToPlay(subtitle);
         }
     }
 }

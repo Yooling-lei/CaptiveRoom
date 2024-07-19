@@ -11,7 +11,7 @@ namespace Script.Controller.UI
     public class SubtitleController : MonoBehaviour
     {
         [Tooltip("字幕淡入淡出速度")] public float FadeSpeed = 1.0f;
-        
+
         // textMeshPro
         private List<SubtitleEntity> _playingSubtitles = new List<SubtitleEntity>();
         private TextMeshProUGUI _subtitleText;
@@ -19,7 +19,7 @@ namespace Script.Controller.UI
 
         private int _targetVisible = 0;
         private bool _isPlaying = false;
-        
+
         private bool IsPlaying
         {
             get => _isPlaying;
@@ -74,7 +74,7 @@ namespace Script.Controller.UI
             }
         }
 
-        
+
         // 更新显示的字幕文本
         private bool UpdateSubtitleText(string text)
         {
@@ -87,14 +87,23 @@ namespace Script.Controller.UI
             _subtitleText.text = text;
             return true;
         }
-
+        
         // 添加字幕到播放队列
-        public void AddSubtitleInSequence(SubtitleEntity subtitle)
+        public void AddSubtitleInSequence(SubtitleEntity subtitle, bool breakCurrent = false)
         {
             if (_playingSubtitles.Exists((x) => x.Key == subtitle.Key)) return;
 
+            if (breakCurrent) BreakSubtitle();
+
             _playingSubtitles.Add(subtitle);
             if (!IsPlaying) StartPlaySubtitle();
+        }
+
+        // 清除当前播放和准备播放的字幕
+        private void BreakSubtitle()
+        {
+            breakFlag = true;
+            _playingSubtitles.Clear();
         }
 
         // 开始播放字幕
@@ -102,6 +111,9 @@ namespace Script.Controller.UI
         {
             StartCoroutine(PlayCurrentSubtitle());
         }
+
+
+        private bool breakFlag;
 
         private IEnumerator PlayCurrentSubtitle()
         {
@@ -111,13 +123,21 @@ namespace Script.Controller.UI
             var elapsedTime = 0.0f;
 
             UpdateSubtitleText(entity.SubtitleText);
-            while (elapsedTime < duration)
-            {   
+            while (elapsedTime < duration && !breakFlag)
+            {
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
 
-            _playingSubtitles.RemoveAt(0);
+            if (breakFlag)
+            {
+                breakFlag = false;
+            }
+            else
+            {
+                _playingSubtitles.RemoveAt(0);
+            }
+
             if (_playingSubtitles.Count > 0)
             {
                 yield return StartCoroutine(PlayCurrentSubtitle());

@@ -13,7 +13,7 @@ namespace Script.Controller.Task.TaskTriggers
             AddTakePillTask();
         }
 
-        private string _takePillTaskName = "TakePill";
+        private readonly string _takePillTaskName = "TakePill";
 
         private void AddTakePillTask()
         {
@@ -21,11 +21,10 @@ namespace Script.Controller.Task.TaskTriggers
             TaskManager.Instance.ListenTask(_takePillTaskName, OnTaskDone);
         }
 
-        private string test = "gaga";
 
         private void OnTaskDone()
         {
-            Debug.Log("达成目标" + test);
+            Debug.Log("达成目标");
         }
     }
 }
