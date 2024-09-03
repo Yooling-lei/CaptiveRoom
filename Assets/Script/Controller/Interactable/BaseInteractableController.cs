@@ -9,24 +9,24 @@ namespace Script.Controller.Interactable
     /// </summary>
     public class BaseInteractableController : MonoBehaviour
     {
-        public Guid id;
-        HighlightEffect highlightEffect;
-        bool hasHighlightEffect;
+        public Guid ID;
+        HighlightEffect _highlightEffect;
+        bool _hasHighlightEffect;
         public Action OnInteraction;
 
 
         protected virtual void Awake()
         {
-            id = Guid.NewGuid();
+            ID = Guid.NewGuid();
         }
 
 
         private void OnEnable()
         {
-            if (highlightEffect == null)
+            if (_highlightEffect == null)
             {
-                highlightEffect = GetComponent<HighlightEffect>();
-                hasHighlightEffect = highlightEffect != null;
+                _highlightEffect = GetComponent<HighlightEffect>();
+                _hasHighlightEffect = _highlightEffect != null;
             }
         }
 
@@ -62,18 +62,18 @@ namespace Script.Controller.Interactable
         private void InvokeInteractTip()
         {
             Debug.Log("invokeInteract tip");
-            if (hasHighlightEffect)
+            if (_hasHighlightEffect)
             {
                 Debug.Log("hasHighlightEffect");
-                highlightEffect.SetHighlighted(true);
+                _highlightEffect.SetHighlighted(true);
             }
         }
 
         private void CancelInteractTip()
         {
-            if (hasHighlightEffect)
+            if (_hasHighlightEffect)
             {
-                highlightEffect.SetHighlighted(false);
+                _highlightEffect.SetHighlighted(false);
             }
         }
     }

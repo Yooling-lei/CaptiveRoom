@@ -4,18 +4,7 @@ public class AnimationPlayer : MonoBehaviour
 {
     public Animator cutScenesAnimator;
     public Animator bedAnimator;
-
     public string[] cutScenesAnimationName;
-    
-    void Update()
-    {
-        // var keyboard = Keyboard.current;
-        // if (keyboard.digit1Key.wasPressedThisFrame)
-        // {
-        //     PlayCutScenesAnimation(1);
-        // }
-    }
-
 
     private void PlayCutScenesAnimation(int i)
     {

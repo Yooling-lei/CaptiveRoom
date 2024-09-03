@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace Script.Controller.Interactable
 {
+    /// <summary>
+    /// 需要解密的物体控制器
+    /// </summary>
     public class PuzzleSceneItemController : BaseInteractableController
     {
         // 解密需要的物品名称

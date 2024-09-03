@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using Script.Entity;
 using Script.Enums;
 using UnityEngine;
@@ -50,13 +49,7 @@ namespace Script.Manager
 
         public TaskEntity GetTask(string title)
         {
-            if (!taskEntities.ContainsKey(title)) return null;
-            return taskEntities[title];
+            return taskEntities.GetValueOrDefault(title);
         }
-
-
-        // 游戏进程:
-        // 1-1, 
-        // 读取存档,发现是1-1
     }
 }

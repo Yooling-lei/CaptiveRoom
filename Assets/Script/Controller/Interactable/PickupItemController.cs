@@ -42,7 +42,7 @@ namespace Script.Controller.Interactable
         private IEnumerator PickUpItem()
         {
             yield return StartCoroutine(FlyToPlayer());
-            yield return StartCoroutine(AddItemToPackage());
+            yield return StartCoroutine(AddItemToPackage()); 
         }
 
         private IEnumerator FlyToPlayer()

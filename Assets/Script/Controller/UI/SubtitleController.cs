@@ -93,6 +93,7 @@ namespace Script.Controller.UI
         {
             if (_playingSubtitles.Exists((x) => x.Key == subtitle.Key)) return;
 
+            // 打断当前播放的字幕
             if (breakCurrent) BreakSubtitle();
 
             _playingSubtitles.Add(subtitle);

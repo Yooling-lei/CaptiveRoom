@@ -96,7 +96,7 @@ namespace Script.Controller.Player
             if (_hasInteractableObject)
             {
                 // 交互物体没变 不用处理
-                if (interactableController.id == _interactableObject.id) return;
+                if (interactableController.ID == _interactableObject.ID) return;
                 // 交互物体变了 取消之前的高亮和提示
                 CancelCurrentInteract();
             }
