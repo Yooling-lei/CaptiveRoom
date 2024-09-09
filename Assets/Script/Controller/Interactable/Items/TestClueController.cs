@@ -2,6 +2,7 @@
 using Script.Manager;
 using Script.ScriptableObjects;
 using UnityEngine;
+using SceneManager = UnityEngine.SceneManagement.SceneManager;
 
 namespace Script.Controller.Interactable.Items
 {
@@ -20,8 +21,11 @@ namespace Script.Controller.Interactable.Items
         {
             Debug.Log("收集线索............");
             Debug.Log(clueScriptable.title);
+            
+            // 去场景2
+            SceneManager.LoadScene("SampleScene");
 
-            ClueArchiveManager.Instance.RecordClue(clueScriptable);
+            // ClueArchiveManager.Instance.RecordClue(clueScriptable);
         }
     }
 }

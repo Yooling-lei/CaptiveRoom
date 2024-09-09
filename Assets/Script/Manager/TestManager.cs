@@ -30,9 +30,6 @@ public class TestManager : Singleton<TestManager>
     private void AddTestItemToBag()
     {
         BagManager.Instance.SetBagSelectMode(EBagSelectMode.Multiple);
-        // BagManager.Instance._b
-        // 1. 破碎杯子
-        // 2. 胶水
         foreach (var item in testInBagItem)
         {
             BagManager.Instance.AddItemToPackage(item.itemName, item);

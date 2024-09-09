@@ -1,6 +1,4 @@
-﻿using System;
-using Script.Manager;
-using Unity.VisualScripting;
+﻿using Script.Manager;
 using UnityEngine;
 
 namespace Script.Controller.Common
