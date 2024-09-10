@@ -1,19 +1,21 @@
-﻿using System;
-using Script.Interface;
-using Script.Manager;
+﻿using Script.Manager;
 using UnityEngine;
 
-namespace Script.Controller.Task.TaskTriggers
+namespace Script.Controller.Task._0_Opening
 {
-    public class PillController : MonoBehaviour
+    public class PillController : BaseTaskTrigger
     {
+        private readonly string _takePillTaskName = "TakePill";
+
         // TODO: 这种物品初始化时基于任务系统
         private void Start()
         {
-            AddTakePillTask();
+            if (base.Verify(_takePillTaskName))
+            {
+                AddTakePillTask();
+            }
         }
 
-        private readonly string _takePillTaskName = "TakePill";
 
         private void AddTakePillTask()
         {

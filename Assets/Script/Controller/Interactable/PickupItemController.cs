@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.ComponentModel;
 using Script.Manager;
 using UnityEngine;
 
@@ -19,7 +21,9 @@ namespace Script.Controller.Interactable
         public float scaleInBag = 1f;
         public EItemStatus itemStatus = EItemStatus.Normal;
         public float flyTime = 1f;
-        
+
+        [Description("若物体曾经被捡起,则不创建")] public bool destroyIfPicked;
+
         private Collider _collider;
 
         protected override void Awake()
@@ -27,6 +31,14 @@ namespace Script.Controller.Interactable
             base.Awake();
             itemStatus = EItemStatus.Normal;
             _collider = GetComponent<Collider>();
+        }
+
+        protected virtual void Start()
+        {
+            if (destroyIfPicked && BagManager.Instance.HasItemPicked(itemName))
+            {
+                Destroy(gameObject);
+            }
         }
 
         public override void OnInteract()
@@ -42,7 +54,7 @@ namespace Script.Controller.Interactable
         private IEnumerator PickUpItem()
         {
             yield return StartCoroutine(FlyToPlayer());
-            yield return StartCoroutine(AddItemToPackage()); 
+            yield return StartCoroutine(AddItemToPackage());
         }
 
         private IEnumerator FlyToPlayer()

@@ -2,12 +2,15 @@
 using Script.Manager;
 using Script.ScriptableObjects;
 using UnityEngine;
+using UnityEngine.Serialization;
 using SceneManager = UnityEngine.SceneManagement.SceneManager;
 
 namespace Script.Controller.Interactable.Items
 {
-    public class TestClueController : BaseInteractableController
+    public class TeleportDemoController : BaseInteractableController
     {
+
+        public string sceneName = "SampleScene";
         public ClueScriptable clueScriptable;
 
         // private void Start()
@@ -23,9 +26,7 @@ namespace Script.Controller.Interactable.Items
             Debug.Log(clueScriptable.title);
             
             // 去场景2
-            SceneManager.LoadScene("SampleScene");
-
-            // ClueArchiveManager.Instance.RecordClue(clueScriptable);
+            SceneManager.LoadScene(sceneName);
         }
     }
 }

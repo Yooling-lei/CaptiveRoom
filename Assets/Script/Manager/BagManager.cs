@@ -59,6 +59,7 @@ namespace Script.Manager
         // 背包的存储矩阵
         public readonly Matrix<ItemInPackage> BagMatrix = new(4, 3);
 
+
         // 背包场景摄像机控制器
         [HideInInspector] public BagRenderCamera bagRenderCameraController;
 
@@ -89,6 +90,8 @@ namespace Script.Manager
         private EBagBehavior _bagBehavior = EBagBehavior.Normal;
 
         private Action<ItemInPackage> _onSelectItem;
+
+        private Dictionary<string, bool> _bagItemArchive = new();
 
         // 背包选中模式: 单选/多选
         private EBagSelectMode _bagSelectMode = EBagSelectMode.Single;
@@ -241,10 +244,9 @@ namespace Script.Manager
 
             var couldMerge = mergeableItem.MergeCheck(_selectedItems);
             Debug.Log("Could Merge: " + couldMerge);
-            
+
             if (couldMerge) mergeableItem.OnMergeSuccess();
             else mergeableItem.OnMergeCheckFailed();
-            
         }
 
         private void RemoveSelectedItem()
@@ -348,6 +350,7 @@ namespace Script.Manager
             Debug.Log("Add Item To Package" + itemName);
             Debug.Log("Add Item To Package" + itemController);
 
+            _bagItemArchive[itemName] = true;
             var (found, _, _) = _FindElement(itemName, BagMatrix);
             if (found != null)
             {
@@ -358,6 +361,10 @@ namespace Script.Manager
                 AddIntoBagMatrix(itemController);
             }
         }
+        
+        public bool HasItemPicked(string itemName) => _bagItemArchive.ContainsKey(itemName);
+        
+        
 
         private void AddIntoBagMatrix(PickupItemController itemController) =>
             AddIntoBagMatrix(itemController, BagMatrix);
