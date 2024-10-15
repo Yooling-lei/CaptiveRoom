@@ -8,7 +8,6 @@ namespace Script.Manager
 {
     public class TaskManager : Singleton<TaskManager>
     {
-        // public List<TaskEntity> taskEntities = new List<TaskEntity>();
         public Dictionary<string, TaskEntity> taskEntities = new Dictionary<string, TaskEntity>();
         public Dictionary<string, Action> taskActions = new Dictionary<string, Action>();
 

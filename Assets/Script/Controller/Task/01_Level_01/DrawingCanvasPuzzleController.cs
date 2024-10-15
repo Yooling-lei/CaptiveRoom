@@ -9,9 +9,14 @@ namespace Script.Controller.Task._01_Level_01
 {
     public class DrawingCanvasPuzzleController : PuzzleSceneItemController
     {
-        private bool _matched = false;
+        private bool _matched;
+        private DrawingPuzzleTotalController _totalController;
 
-        public bool isMatched => _matched;
+        private void Start()
+        {
+            _totalController = FindObjectOfType<DrawingPuzzleTotalController>();
+        }
+
 
         public override void OnInteract()
         {
@@ -27,14 +32,20 @@ namespace Script.Controller.Task._01_Level_01
 
             // 修改对应的贴图颜色
             SetMaterial(GetRedMaterial(item.ItemName));
-            if (item.ItemName == puzzleNeedItemName)
-            {
-                _matched = true;
-            }
+            _matched = item.ItemName == puzzleNeedItemName;
+            _totalController.SetMatched(item.ItemName, _matched, this);
 
             // 关闭背包
             BagManager.Instance.ToggleBagVisible(false);
+
+           
         }
+
+        public void Success()
+        {
+            OnPuzzleSuccess();
+        }
+
 
         // 设置当前GameObject的材质
         public void SetMaterial(Material material)
@@ -42,11 +53,11 @@ namespace Script.Controller.Task._01_Level_01
             GetComponent<Renderer>().material = material;
         }
 
-        // 获取名字为"RedMaterial"的材质
-        public Material GetRedMaterial(string name)
+        // 根据获取名字为材质
+        public Material GetRedMaterial(string colorName)
         {
             var materialName = "";
-            switch (name)
+            switch (colorName)
             {
                 case "RedBrush":
                     materialName = "RedMaterial";
@@ -61,10 +72,5 @@ namespace Script.Controller.Task._01_Level_01
 
             return Resources.Load<Material>("Material/" + materialName);
         }
-
-        // private void Start()
-        // {
-        //     SetMaterial(GetRedMaterial());
-        // }
     }
 }

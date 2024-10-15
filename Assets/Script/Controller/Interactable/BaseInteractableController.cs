@@ -11,6 +11,7 @@ namespace Script.Controller.Interactable
     public class BaseInteractableController : MonoBehaviour
     {
         public Guid ID;
+        public bool IsInteractable = true;
         HighlightEffect _highlightEffect;
         bool _hasHighlightEffect;
         public Action OnInteraction;
@@ -45,7 +46,7 @@ namespace Script.Controller.Interactable
 
         public virtual void InvokeInteractable()
         {
-            InvokeInteractTip();
+            if (IsInteractable) InvokeInteractTip();
             // OnInteraction?.Invoke();
         }
 

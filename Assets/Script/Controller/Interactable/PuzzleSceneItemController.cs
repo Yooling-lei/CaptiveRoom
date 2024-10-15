@@ -24,8 +24,8 @@ namespace Script.Controller.Interactable
 
         protected virtual void OnPuzzleSuccess()
         {
-            Debug.Log("解密成功");
             puzzleDone = true;
+            IsInteractable = false;
         }
 
         private void OnItemSelect(ItemInPackage item)
