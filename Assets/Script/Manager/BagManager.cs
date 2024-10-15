@@ -7,11 +7,8 @@ using Script.Controller.UI;
 using Script.Entity;
 using Script.Extension;
 using Script.Interface;
-using Script.Tools;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem;
-using UnityEngine.UI;
 
 namespace Script.Manager
 {
@@ -58,7 +55,6 @@ namespace Script.Manager
 
         // 背包的存储矩阵
         public readonly Matrix<ItemInPackage> BagMatrix = new(4, 3);
-
 
         // 背包场景摄像机控制器
         [HideInInspector] public BagRenderCamera bagRenderCameraController;
@@ -160,6 +156,8 @@ namespace Script.Manager
         /// </summary>
         private void OnSlotClick(int index, int row, int col)
         {
+            Debug.Log("捕获点击事件");
+
             var item = BagMatrix.GetElement(row, col);
             if (isSingleSelect)
             {
@@ -361,10 +359,9 @@ namespace Script.Manager
                 AddIntoBagMatrix(itemController);
             }
         }
-        
+
         public bool HasItemPicked(string itemName) => _bagItemArchive.ContainsKey(itemName);
-        
-        
+
 
         private void AddIntoBagMatrix(PickupItemController itemController) =>
             AddIntoBagMatrix(itemController, BagMatrix);

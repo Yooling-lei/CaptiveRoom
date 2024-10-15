@@ -11,7 +11,7 @@ namespace Script.Controller.Interactable
     {
         // 解密需要的物品名称
         public string puzzleNeedItemName;
-        private bool puzzleDone = false;
+        protected bool puzzleDone = false;
 
         public override void OnInteract()
         {

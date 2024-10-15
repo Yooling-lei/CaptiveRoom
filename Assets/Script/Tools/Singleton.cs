@@ -10,13 +10,11 @@ public class Singleton<T> : MonoBehaviour where T : Singleton<T>
     {
         if (Instance != null) Destroy(gameObject);
         else Instance = (T)this;
-        
-        Debug.Log("Singleton Awake" + Instance.name);
-        
     }
 
     protected void OnDestroy()
     {
+        
         if (Instance == this) Instance = null;
     }
 }
