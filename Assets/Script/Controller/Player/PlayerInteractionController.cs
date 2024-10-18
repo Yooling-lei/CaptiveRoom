@@ -35,6 +35,14 @@ namespace Script.Controller.Player
             _input.InteractAction += OnInputInteract;
         }
 
+        // private void OnEnable()
+        // {
+        //     _input = GetComponent<PlayerInputReceiver>();
+        //     GameManager.Instance.RegisterPlayer(this.gameObject);
+        //     _input.ToggleBagAction += OnInputToggleBag;
+        //     _input.InteractAction += OnInputInteract;
+        // }
+
         private void Update()
         {
             // 玩家朝向且在范围内的可交互物体: 高亮、提示

@@ -37,8 +37,6 @@ namespace Script.Controller.Task._01_Level_01
 
             // 关闭背包
             BagManager.Instance.ToggleBagVisible(false);
-
-           
         }
 
         public void Success()

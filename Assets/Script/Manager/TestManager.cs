@@ -18,13 +18,15 @@ public class TestManager : Singleton<TestManager>
     public List<PickupItemController> testInBagItem;
     public GameObject testRawImage;
     public Camera testCamera;
-    
+
 
     void Start()
     {
         DebugLogConsole.AddCommand("save", "Save", SaveManager.SaveData);
         DebugLogConsole.AddCommand("load", "Save", SaveManager.LoadData);
         DebugLogConsole.AddCommand("add", "AddItemToBag", AddTestItemToBag);
+
+        DebugLogConsole.AddCommand("palide", "Test Palide", TestPailide);
     }
 
     private void AddTestItemToBag()
@@ -34,6 +36,15 @@ public class TestManager : Singleton<TestManager>
         {
             BagManager.Instance.AddItemToPackage(item.itemName, item);
         }
+    }
+
+    private void TestPailide()
+    {
+        // 在场景中寻找名字为 "Palide" 的物体
+        var palide = GameObject.Find("PaiLiDo");
+        var palide2 = GameObject.Find("RedBrush");
+        Debug.Log(palide == null);
+        Debug.Log(palide2 == null);
     }
 
 

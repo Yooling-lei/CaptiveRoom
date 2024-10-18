@@ -5,9 +5,9 @@ namespace Script.Controller.Task._01_Level_01
 {
     public class DrawingPuzzleTotalController : MonoBehaviour
     {
-        private bool _redMatched = false;
-        private bool _blueMatched = false;
-        private bool _yellowMatched = false;
+        private bool _redMatched;
+        private bool _blueMatched;
+        private bool _yellowMatched;
 
         private DrawingCanvasPuzzleController _redController;
         private DrawingCanvasPuzzleController _blueController;

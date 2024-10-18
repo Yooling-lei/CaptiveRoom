@@ -12,11 +12,19 @@ public class PlayerInputReceiver : MonoBehaviour
     public bool jump;
     public bool sprint;
     public Action ToggleBagAction;
+
     public Action InteractAction;
+
+    // 右键放大视角(瞄准视角)
+    public bool viewFocus;
 
     [Header("Movement Settings")] public bool analogMovement;
     [Header("Mouse Cursor Settings")] public bool cursorLocked = true;
     public bool cursorInputForLook = true;
+
+    private void OnEnable()
+    {
+    }
 
 
 #if ENABLE_INPUT_SYSTEM
@@ -43,6 +51,12 @@ public class PlayerInputReceiver : MonoBehaviour
         SprintInput(value.isPressed);
     }
 
+    // 正在按下右键
+    public void OnViewFocus(InputValue value)
+    {
+        ViewFocusInput(value.isPressed);
+    }
+
     // 按下交互键
     public void OnInteract(InputValue value)
     {
@@ -54,6 +68,7 @@ public class PlayerInputReceiver : MonoBehaviour
     {
         ToggleBagAction();
     }
+
 
 #endif
 
@@ -76,5 +91,10 @@ public class PlayerInputReceiver : MonoBehaviour
     public void SprintInput(bool newSprintState)
     {
         sprint = newSprintState;
+    }
+
+    public void ViewFocusInput(bool newViewFocusState)
+    {
+        viewFocus = newViewFocusState;
     }
 }
