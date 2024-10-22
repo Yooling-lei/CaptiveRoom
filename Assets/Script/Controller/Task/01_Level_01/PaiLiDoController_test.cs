@@ -9,47 +9,49 @@ namespace Script.Controller.Task._01_Level_01
 {
     public class PaiLiDoController_test : MonoBehaviour
     {
-        Camera mainCamera;
+        // 初始化参数
+        public Image filmingMarkImage;
+        Camera _mainCamera;
         PlayerInputReceiver _input;
         private Animator animator;
-        public Image filmingMarkImage;
         private bool init;
-
-        //物体的meshRender
+        private GameObject _player;
+        // 物体的meshRender
         private MeshRenderer _meshRenderer;
-        private bool _picked;
 
-        private float _takePhotoCD;
+        
+        // 是否被主角捡起
+        private bool _picked;
+        // 拍照CD
+        private float _takePhotoCd;
+        private static readonly int Speed = Animator.StringToHash("Speed");
 
         public void PickUpPaiLiDo()
         {
+            // FIXME: 捡起拍立得
             transform.SetParent(Camera.main.transform);
             transform.localPosition = new Vector3(0.3f, -0.2f, 0.7f);
             _input = GameManager.Instance.playerInputReceiver;
             _picked = true;
-            // TODO: 此时应该开始响应鼠标右键输入事件, 使得给物体一个拉进的效果
         }
 
         void InitFunc()
         {
-            mainCamera = Camera.main;
+            _mainCamera = Camera.main;
+            _player = GameManager.Instance?.player;
             _input = GameManager.Instance?.playerInputReceiver;
             _meshRenderer = GetComponent<MeshRenderer>();
             animator = GetComponent<Animator>();
 
-            if (_input != null && mainCamera != null) init = true;
+            if (_input != null && _mainCamera != null) init = true;
         }
 
 
         private void OnEnable()
         {
             InitFunc();
-            // mainCamera = Camera.main;
-            // StartCoroutine(TestGet());
         }
 
-
-        private float _focusDuration = 0f;
 
         private void Update()
         {
@@ -58,74 +60,86 @@ namespace Script.Controller.Task._01_Level_01
                 InitFunc();
                 return;
             }
-
             ControlAnimation();
             ControlTakePhoto();
-            ToolBox.DeductTimer(ref _takePhotoCD);
-
-            // TODO: 根据_focusDuration来调整物体的位置
+            ToolBox.DeductTimer(ref _takePhotoCd);
         }
 
         private bool _animationDone;
-
+        /// <summary>
+        /// 拍照动画控制
+        /// </summary>
         private void ControlAnimation()
         {
             _animationDone = false;
             var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+
             if (_input.viewFocus)
             {
-                // TODO: 1.Canvas上画一个摄像中的UI
-                // TODO: 2.当拍立得动画播放完毕, 展示这个UI
-                // TODO: 3.当松开右键,要播放收起动画时, 隐藏这个UI
-
                 if (stateInfo.normalizedTime >= 1.0f)
                 {
-                    // 播完了
-                    animator.SetFloat("Speed", 0f);
+                    StopAnimation();
                     _animationDone = true;
-                    // 播完了, 显示摄像中的UI
-                    // filmingMarkImage.enabled = true;
                 }
-                else
-                {
-                    animator.SetFloat("Speed", 1f);
-                    // filmingMarkImage.enabled = false;
-                }
+                else StartAnimation();
             }
             else
             {
-                if (stateInfo.normalizedTime <= 0.01f)
-                {
-                    // 播完了
-                    animator.SetFloat("Speed", 0f);
-                }
-                else
-                {
-                    animator.SetFloat("Speed", -1f);
-                }
+                if (stateInfo.normalizedTime <= 0.01f) StopAnimation();
+                else StartAnimation(true);
             }
 
             filmingMarkImage.enabled = _animationDone;
             _meshRenderer.enabled = !_animationDone;
+            return;
+
+            void StopAnimation()
+            {
+                animator.SetFloat(Speed, 0f);
+            }
+
+            void StartAnimation(bool back = false)
+            {
+                animator.SetFloat(Speed, back ? -2f : 2f);
+            }
         }
 
+        /// <summary>
+        /// 拍照和拍照时检验
+        /// </summary>
         private void ControlTakePhoto()
         {
+            // 按下左键
             if (!_input.fire) return;
             _input.fire = false;
-            
+
             if (!_animationDone) return;
-            if(_takePhotoCD > 0)
+            if (_takePhotoCd > 0)
             {
                 Debug.Log("CD中");
                 return;
             }
+
             // TODO: 后面还需要防抖等
-            Debug.Log("拍照");
-            // 拍照后应该有三秒钟CD
-            _takePhotoCD = 3f;
+            _takePhotoCd = 1f;
+            var isChecked = CheckStandPoint();
+            Debug.Log("拍照" + isChecked);
         }
 
+        // 用于辅助校验拍照是否正确的 站立点位 和 视角点位
+        public GameObject standPoint;
+        public GameObject viewPoint;
+
+        // 校验主角是否站立在站立点位附近, 且视角朝向视角点位
+        private bool CheckStandPoint()
+        {
+            // 柑橘主角站立点位和视角朝向点位判断
+            var currentPosition = _player.transform.position;
+            var distance = Vector3.Distance(standPoint.transform.position, currentPosition);
+            if (distance < 1f) return false;
+            var screenPoint = _mainCamera.WorldToViewportPoint(viewPoint.transform.position);
+            return screenPoint is { x: >= 0.45f and <= 0.55f, y: >= 0.45f and <= 0.55f };
+        }
 
         private IEnumerator TestGet()
         {
