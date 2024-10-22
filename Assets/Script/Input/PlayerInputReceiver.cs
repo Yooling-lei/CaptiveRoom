@@ -11,6 +11,7 @@ public class PlayerInputReceiver : MonoBehaviour
     public Vector2 look;
     public bool jump;
     public bool sprint;
+    public bool fire;
     public Action ToggleBagAction;
 
     public Action InteractAction;
@@ -21,10 +22,6 @@ public class PlayerInputReceiver : MonoBehaviour
     [Header("Movement Settings")] public bool analogMovement;
     [Header("Mouse Cursor Settings")] public bool cursorLocked = true;
     public bool cursorInputForLook = true;
-
-    private void OnEnable()
-    {
-    }
 
 
 #if ENABLE_INPUT_SYSTEM
@@ -56,6 +53,13 @@ public class PlayerInputReceiver : MonoBehaviour
     {
         ViewFocusInput(value.isPressed);
     }
+
+    // 按下鼠标左键
+    public void OnFire(InputValue value)
+    {
+        FireInput(value.isPressed);
+    }
+
 
     // 按下交互键
     public void OnInteract(InputValue value)
@@ -96,5 +100,10 @@ public class PlayerInputReceiver : MonoBehaviour
     public void ViewFocusInput(bool newViewFocusState)
     {
         viewFocus = newViewFocusState;
+    }
+
+    public void FireInput(bool newFireState)
+    {
+        fire = newFireState;
     }
 }

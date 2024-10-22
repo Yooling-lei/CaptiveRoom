@@ -25,6 +25,7 @@ namespace Script.Controller.Task._01_Level_01
 
         private void OnEnable()
         {
+            return;
             mainCamera = Camera.main;
             StartCoroutine(TestGet());
         }
@@ -34,25 +35,10 @@ namespace Script.Controller.Task._01_Level_01
 
         private void Update()
         {
-            return;
             if (!_picked) return;
 
-            // TODO: 平常状态是0, 举起相机状态是100,通过按住右键的行为来过渡
-            if (_input.viewFocus)
-            {
-                var count = 100 * Time.deltaTime;
-                _focusDuration += count;
-                if (_focusDuration > 100) _focusDuration = 100;
-            }
-            else
-            {
-                var count = 100 * Time.deltaTime;
-                _focusDuration -= count;
-                if (_focusDuration < 0) _focusDuration = 0;
-            }
-            
-            // TODO: 根据_focusDuration来调整物体的位置
 
+            // TODO: 根据_focusDuration来调整物体的位置
         }
 
         private IEnumerator TestGet()

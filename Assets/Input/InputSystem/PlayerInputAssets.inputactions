@@ -67,6 +67,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Fire",
+                    "type": "Button",
+                    "id": "3f05d3fe-bfd6-4035-895f-31658ef63e72",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -276,6 +285,45 @@
                     "processors": "",
                     "groups": "",
                     "action": "ViewFocus",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2ca295aa-9cf4-4319-bed9-9c69d527808d",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Fire",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "PaiLiDo",
+            "id": "aa304aac-48fe-4b01-9ca9-085bc7c7ef4f",
+            "actions": [
+                {
+                    "name": "TakePhoto",
+                    "type": "Button",
+                    "id": "97d8d213-5484-499a-a757-5018e80fccb2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "1a37d831-4ce5-49ce-beee-a60e32ca9882",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TakePhoto",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
