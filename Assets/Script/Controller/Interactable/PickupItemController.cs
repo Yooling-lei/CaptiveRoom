@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using Script.Manager;
+using Script.Tools;
 using UnityEngine;
 
 namespace Script.Controller.Interactable
@@ -59,15 +60,7 @@ namespace Script.Controller.Interactable
 
         private IEnumerator FlyToPlayer()
         {
-            var elapsedTime = 0.0f;
-            var startPos = transform.position;
-            var targetPos = GameManager.Instance.player.transform.position;
-            while (elapsedTime < flyTime)
-            {
-                elapsedTime += Time.deltaTime;
-                transform.position = Vector3.Lerp(startPos, targetPos, elapsedTime / flyTime);
-                yield return null;
-            }
+            yield return StartCoroutine(ToolBox.SmoothMoveToPosition(transform, GameManager.Instance.player.transform.position, flyTime));
         }
 
         private IEnumerator AddItemToPackage()
