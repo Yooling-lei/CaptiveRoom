@@ -4,6 +4,7 @@ using Script.Controller.Interactable;
 using Script.Entity;
 using Script.Manager;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Script.Controller.Task._01_Level_01
 {
@@ -11,6 +12,11 @@ namespace Script.Controller.Task._01_Level_01
     {
         private bool _matched;
         private DrawingPuzzleTotalController _totalController;
+        public GameObject drawingPanel;
+        public Material redPainting;
+        public Material bluePainting;
+        public Material yellowPainting;
+        public Material emptyPainting;
 
         private void Start()
         {
@@ -46,29 +52,21 @@ namespace Script.Controller.Task._01_Level_01
 
 
         // 设置当前GameObject的材质
-        public void SetMaterial(Material material)
+        private void SetMaterial(Material material)
         {
-            GetComponent<Renderer>().material = material;
+            drawingPanel.GetComponent<Renderer>().material = material;
         }
 
         // 根据获取名字为材质
-        public Material GetRedMaterial(string colorName)
+        private Material GetRedMaterial(string colorName)
         {
-            var materialName = "";
-            switch (colorName)
+            return colorName switch
             {
-                case "RedBrush":
-                    materialName = "RedMaterial";
-                    break;
-                case "BlueBrush":
-                    materialName = "BlueMaterial";
-                    break;
-                case "YellowBrush":
-                    materialName = "YellowMaterial";
-                    break;
-            }
-
-            return Resources.Load<Material>("Material/" + materialName);
+                "RedBrush" => redPainting,
+                "BlueBrush" => bluePainting,
+                "YellowBrush" => yellowPainting,
+                _ => emptyPainting
+            };
         }
     }
 }

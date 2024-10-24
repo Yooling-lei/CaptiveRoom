@@ -41,6 +41,7 @@ namespace Script.Controller.Task._01_Level_01
             _redController.Success();
             _blueController.Success();
             _yellowController.Success();
+            Debug.Log("Drawing Puzzle Success");
 
             // TODO: 当三个面板全部匹配时, 触发后续
             // 1. 播放类似老师鼓励动画
